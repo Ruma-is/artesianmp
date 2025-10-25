@@ -1,4 +1,5 @@
 import { CartProvider } from '@/contexts/CartContext'
+import { AuthProvider } from '@/lib/supabase/auth-context'
 import Navbar from '@/components/Navbar'
 import './globals.css'
 
@@ -10,10 +11,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <CartProvider>
-          <Navbar />
-          {children}
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            {children}
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   )
