@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import AddToCartButton from '@/components/products/AddToCartButton';
 
 export default async function ProductDetailPage({
   params,
@@ -50,9 +51,7 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="space-y-3">
-              <button className="w-full bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 font-semibold">
-                Add to Cart
-              </button>
+              <AddToCartButton product={product} />
               <button className="w-full border-2 border-orange-600 text-orange-600 px-6 py-3 rounded-lg hover:bg-orange-50 font-semibold">
                 Contact Artisan
               </button>
