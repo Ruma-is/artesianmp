@@ -16,13 +16,36 @@ export default function AddToCartButton({ product }: { product: any }) {
   return (
     <button
       onClick={handleAdd}
-      className={`w-full px-6 py-3 rounded-lg font-semibold transition ${
+      className={`w-full px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2 ${
         added
           ? 'bg-green-600 text-white'
-          : 'bg-orange-600 text-white hover:bg-orange-700'
+          : 'text-white'
       }`}
+      style={{ 
+        backgroundColor: added ? '#16a34a' : '#926829'
+      }}
+      onMouseEnter={(e) => {
+        if (!added) {
+          e.currentTarget.style.backgroundColor = '#7a5621'
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!added) {
+          e.currentTarget.style.backgroundColor = '#926829'
+        }
+      }}
     >
-      {added ? '✓ Added to Cart!' : 'Add to Cart'}
+      {added ? (
+        <>
+          <span>✓</span>
+          <span>Added to Cart!</span>
+        </>
+      ) : (
+        <>
+          <span>🛒</span>
+          <span>Add to Cart</span>
+        </>
+      )}
     </button>
   )
 }
