@@ -1,8 +1,94 @@
 'use client'
 
 import Link from 'next/link'
+import { useAuth } from '@/lib/supabase/auth-context'
+import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+  const supabase = createClient()
+  
+  const [products, setProducts] = useState<any[]>([])
+  const [orders, setOrders] = useState<any[]>([])
+  const [stats, setStats] = useState({
+    activeProducts: 0,
+    soldProducts: 0,
+    totalEarnings: 0,
+    pendingOrders: 0,
+    deliveredOrders: 0,
+    totalOrders: 0
+  })
+
+  useEffect(() => {
+    if (user) {
+      fetchData()
+    }
+  }, [user])
+
+  const fetchData = async () => {
+    if (!user) return
+
+    // First get user's artisan profile
+    const { data: artisanProfile } = await supabase
+      .from('artisan_profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    // Then fetch products using artisan_id
+    if (artisanProfile) {
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('*')
+        .eq('artisan_id', artisanProfile.id)
+        .order('created_at', { ascending: false })
+
+      if (productsData) {
+        setProducts(productsData)
+        setStats(prev => ({
+          ...prev,
+          activeProducts: productsData.length
+        }))
+      }
+    }
+
+    // Fetch user's orders (as buyer)
+    const { data: ordersData } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('buyer_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (ordersData) {
+      setOrders(ordersData)
+      const pending = ordersData.filter(o => o.status === 'pending').length
+      const delivered = ordersData.filter(o => o.status === 'delivered').length
+      
+      setStats(prev => ({
+        ...prev,
+        pendingOrders: pending,
+        deliveredOrders: delivered,
+        totalOrders: ordersData.length
+      }))
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f5' }}>
+        <div className="text-6xl animate-bounce">⏳</div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    router.push('/auth/login')
+    return null
+  }
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#faf8f5' }}>
       {/* Header Section */}
@@ -34,20 +120,33 @@ export default function DashboardPage() {
             </div>
             
             <div className="bg-gray-50 rounded-xl p-6 mb-6" style={{ backgroundColor: '#f5efe6' }}>
-              <p className="text-gray-600 text-lg text-center mb-2">
-                You have no orders yet
-              </p>
-              <p className="text-sm text-gray-500 text-center">
-                Start shopping for beautiful handcrafted items!
-              </p>
+              {stats.totalOrders > 0 ? (
+                <>
+                  <p className="text-gray-600 text-lg text-center mb-2">
+                    You have {stats.totalOrders} order{stats.totalOrders !== 1 ? 's' : ''}
+                  </p>
+                  <p className="text-sm text-gray-500 text-center">
+                    {stats.pendingOrders} pending • {stats.deliveredOrders} delivered
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-gray-600 text-lg text-center mb-2">
+                    You have no orders yet
+                  </p>
+                  <p className="text-sm text-gray-500 text-center">
+                    Start shopping for beautiful handcrafted items!
+                  </p>
+                </>
+              )}
             </div>
 
-            <Link href="/products">
+            <Link href={stats.totalOrders > 0 ? "/orders" : "/products"}>
               <button className="w-full py-4 text-white rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
                       style={{ backgroundColor: '#926829' }}
                       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7a5621')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}>
-                <span>Browse Products</span>
+                <span>{stats.totalOrders > 0 ? 'View Orders' : 'Browse Products'}</span>
                 <span>→</span>
               </button>
             </Link>
@@ -55,15 +154,15 @@ export default function DashboardPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t-2" style={{ borderColor: '#e8dfd0' }}>
               <div className="text-center">
-                <div className="text-2xl font-bold" style={{ color: '#926829' }}>0</div>
+                <div className="text-2xl font-bold" style={{ color: '#926829' }}>{stats.pendingOrders}</div>
                 <p className="text-xs text-gray-600">Pending</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold" style={{ color: '#926829' }}>0</div>
+                <div className="text-2xl font-bold" style={{ color: '#926829' }}>{stats.deliveredOrders}</div>
                 <p className="text-xs text-gray-600">Delivered</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold" style={{ color: '#926829' }}>0</div>
+                <div className="text-2xl font-bold" style={{ color: '#926829' }}>{stats.totalOrders}</div>
                 <p className="text-xs text-gray-600">Total</p>
               </div>
             </div>
@@ -81,36 +180,59 @@ export default function DashboardPage() {
             </div>
             
             <div className="bg-gray-50 rounded-xl p-6 mb-6" style={{ backgroundColor: '#f5efe6' }}>
-              <p className="text-gray-600 text-lg text-center mb-2">
-                Start selling your products!
-              </p>
-              <p className="text-sm text-gray-500 text-center">
-                Share your handcrafted creations with the world
-              </p>
+              {products.length > 0 ? (
+                <>
+                  <p className="text-gray-600 text-lg text-center mb-2">
+                    You have {products.length} product{products.length !== 1 ? 's' : ''}
+                  </p>
+                  <p className="text-sm text-gray-500 text-center">
+                    Keep adding more handcrafted items!
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-gray-600 text-lg text-center mb-2">
+                    Start selling your products!
+                  </p>
+                  <p className="text-sm text-gray-500 text-center">
+                    Share your handcrafted creations with the world
+                  </p>
+                </>
+              )}
             </div>
 
-            <Link href="/dashboard/add-product">
-              <button className="w-full py-4 text-white rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
-                      style={{ backgroundColor: '#926829' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7a5621')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}>
-                <span>Add Product</span>
-                <span>+</span>
-              </button>
-            </Link>
+            <div className="space-y-6">
+              <Link href="/dashboard/my-products">
+                <button className="w-full py-3 border-2 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 mb-6"
+                        style={{ borderColor: '#926829', color: '#926829' }}>
+                  <span>View My Products</span>
+                  <span>→</span>
+                </button>
+              </Link>
+              
+              <Link href="/dashboard/add-product">
+                <button className="w-full py-4 text-white rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
+                        style={{ backgroundColor: '#926829' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7a5621')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}>
+                  <span>Add Product</span>
+                  <span>+</span>
+                </button>
+              </Link>
+            </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t-2" style={{ borderColor: '#e8dfd0' }}>
               <div className="text-center">
-                <div className="text-2xl font-bold" style={{ color: '#926829' }}>0</div>
+                <div className="text-2xl font-bold" style={{ color: '#926829' }}>{stats.activeProducts}</div>
                 <p className="text-xs text-gray-600">Active</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold" style={{ color: '#926829' }}>0</div>
+                <div className="text-2xl font-bold" style={{ color: '#926829' }}>{stats.soldProducts}</div>
                 <p className="text-xs text-gray-600">Sold</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold" style={{ color: '#926829' }}>₹0</div>
+                <div className="text-2xl font-bold" style={{ color: '#926829' }}>₹{stats.totalEarnings}</div>
                 <p className="text-xs text-gray-600">Earnings</p>
               </div>
             </div>

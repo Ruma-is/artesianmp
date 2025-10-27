@@ -1,20 +1,48 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useCart } from '@/contexts/CartContext'
 import { useState, useRef, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const { totalItems } = useCart()
   const [visible, setVisible] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const triggerRef = useRef<HTMLDivElement | null>(null)
   const navRef = useRef<HTMLElement | null>(null)
+  const supabase = createClient()
 
   const isActive = (path: string) => pathname === path
 
   const isAuthPage = pathname?.startsWith('/auth/')
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user ?? null)
+      setLoading(false)
+    }
+    checkUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Handle logout
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
 
   // Close navbar on route change
   useEffect(() => {
@@ -78,20 +106,36 @@ export default function Navbar() {
                 )}
               </Link>
 
-              <Link
-                href="/auth/login"
-                className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110"
-              >
-                Login
-              </Link>
+              {!loading && (
+                <>
+                  {user ? (
+                    <button
+                      onClick={handleLogout}
+                      className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform"
+                      style={{ color: '#926829' }}
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <>
+                      <Link
+                        href="/auth/login"
+                        className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110"
+                      >
+                        Login
+                      </Link>
 
-              <Link
-                href="/auth/signup"
-                className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform"
-                style={{ color: '#926829' }}
-              >
-                Sign Up
-              </Link>
+                      <Link
+                        href="/auth/signup"
+                        className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform"
+                        style={{ color: '#926829' }}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -166,21 +210,37 @@ export default function Navbar() {
                 )}
               </Link>
 
-              <Link
-                href="/auth/login"
-                className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110 animate-slide-in"
-                style={{ animationDelay: '0.3s' }}
-              >
-                Login
-              </Link>
+              {!loading && (
+                <>
+                  {user ? (
+                    <button
+                      onClick={handleLogout}
+                      className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform animate-slide-in"
+                      style={{ color: '#926829', animationDelay: '0.3s' }}
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <>
+                      <Link
+                        href="/auth/login"
+                        className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110 animate-slide-in"
+                        style={{ animationDelay: '0.3s' }}
+                      >
+                        Login
+                      </Link>
 
-              <Link
-                href="/auth/signup"
-                className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform animate-slide-in"
-                style={{ color: '#926829', animationDelay: '0.35s' }}
-              >
-                Sign Up
-              </Link>
+                      <Link
+                        href="/auth/signup"
+                        className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform animate-slide-in"
+                        style={{ color: '#926829', animationDelay: '0.35s' }}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>

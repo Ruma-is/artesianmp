@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -21,21 +21,19 @@ export default function Home() {
           <div className="absolute top-20 left-10 text-9xl animate-float">🎨</div>
           <div className="absolute top-40 right-20 text-8xl animate-float-delayed">✂️</div>
           <div className="absolute bottom-32 left-1/4 text-7xl animate-float-slow">🧵</div>
-          <div className="absolute bottom-20 right-1/3 text-8xl animate-float-slow-delayed">🪡</div>
-          <div className="absolute top-1/3 right-1/4 text-6xl animate-float">🏺</div>
-          <div className="absolute bottom-1/3 left-1/3 text-7xl animate-float-delayed">🪔</div>
+          <div className="absolute bottom-40 right-1/4 text-6xl animate-float">🪔</div>
+          <div className="absolute top-1/3 right-1/3 text-8xl animate-float-delayed">🏺</div>
         </div>
 
-        {/* Parallax Background Elements */}
-        <div 
-          className="absolute inset-0 opacity-5"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
-        >
-          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-white blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-white blur-3xl"></div>
-        </div>
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-6 max-w-6xl mx-auto">
+          {/* Scroll-based Parallax Badge */}
+          <div 
+            className="inline-block mb-8 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border-2 border-white/30 animate-fade-in"
+            style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+            <p className="text-white font-semibold text-lg">🌟 Celebrating Indian Craftsmanship Since 2024</p>
+          </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
           {/* Main Heading with Stagger Animation */}
           <div className="mb-6 animate-slide-in-down">
             <h1 className="text-7xl md:text-8xl font-bold text-white mb-4 tracking-tight animate-fade-in" style={{ fontFamily: 'Georgia, serif' }}>
@@ -66,61 +64,68 @@ export default function Home() {
               </button>
             </Link>
             <Link href="/auth/signup">
-              <button className="group relative px-10 py-4 border-3 border-white text-white text-lg font-semibold rounded-xl hover:bg-white transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl"
+              <button className="px-10 py-4 border-3 border-white text-white text-lg font-semibold rounded-xl hover:bg-white transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg"
                       style={{ borderWidth: '2px' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = '#926829')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'white')}>
-                <span className="flex items-center gap-2">
-                  Join as Artisan
-                  <span className="transform group-hover:translate-x-1 transition-transform">✨</span>
-                </span>
+                Start Selling
               </button>
             </Link>
           </div>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
-            <div className="text-white text-sm mb-2 opacity-75">Scroll to explore</div>
-            <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-              <div className="w-1.5 h-3 bg-white rounded-full mt-2 animate-scroll-indicator"></div>
+          {/* Trust Badges */}
+          <div className="mt-16 flex flex-wrap justify-center gap-8 text-white/80 text-sm animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">✓</span>
+              <span>100% Authentic</span>
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">✓</span>
+              <span>Secure Payments</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">✓</span>
+              <span>Pan-India Shipping</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
+            <div className="w-1.5 h-3 bg-white/70 rounded-full mt-2 animate-scroll-indicator"></div>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 relative" style={{ backgroundColor: '#f5efe6' }}>
+      <section className="py-20" style={{ backgroundColor: '#f5efe6' }}>
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            {[
-              { number: '500+', label: 'Artisans', icon: '👨‍🎨' },
-              { number: '2000+', label: 'Products', icon: '🎨' },
-              { number: '50+', label: 'States', icon: '📍' },
-              { number: '10k+', label: 'Happy Customers', icon: '⭐' }
-            ].map((stat, index) => (
-              <div 
-                key={index}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-scale-in border-2"
-                style={{ 
-                  animationDelay: `${index * 0.1}s`,
-                  borderColor: '#e8dfd0'
-                }}
-              >
-                <div className="text-5xl mb-3 animate-bounce-subtle">{stat.icon}</div>
-                <div className="text-4xl font-bold mb-2" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="animate-fade-in">
+              <div className="text-5xl md:text-6xl font-bold mb-2" style={{ color: '#926829' }}>500+</div>
+              <p className="text-gray-600 text-lg">Skilled Artisans</p>
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="text-5xl md:text-6xl font-bold mb-2" style={{ color: '#926829' }}>2K+</div>
+              <p className="text-gray-600 text-lg">Unique Products</p>
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="text-5xl md:text-6xl font-bold mb-2" style={{ color: '#926829' }}>5K+</div>
+              <p className="text-gray-600 text-lg">Happy Customers</p>
+            </div>
+            <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="text-5xl md:text-6xl font-bold mb-2" style={{ color: '#926829' }}>28</div>
+              <p className="text-gray-600 text-lg">States Covered</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 relative overflow-hidden">
+      {/* Why Choose Us Section */}
+      <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 animate-fade-in">
+          <div className="text-center mb-16">
             <h2 className="text-5xl font-bold mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
               Why Choose Us
             </h2>
@@ -137,6 +142,7 @@ export default function Home() {
                    borderColor: '#e8dfd0',
                    animationDelay: '0.1s'
                  }}>
+              {/* Decorative Circle */}
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"
                    style={{ backgroundColor: '#926829' }}></div>
               
@@ -174,6 +180,7 @@ export default function Home() {
                    borderColor: '#e8dfd0',
                    animationDelay: '0.2s'
                  }}>
+              {/* Decorative Circle */}
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"
                    style={{ backgroundColor: '#926829' }}></div>
               
@@ -211,6 +218,7 @@ export default function Home() {
                    borderColor: '#e8dfd0',
                    animationDelay: '0.3s'
                  }}>
+              {/* Decorative Circle */}
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"
                    style={{ backgroundColor: '#926829' }}></div>
               
@@ -222,8 +230,8 @@ export default function Home() {
                   AI-Powered
                 </h3>
                 <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  Smart pricing, multilingual support, and personalized recommendations 
-                  powered by advanced AI.
+                  Leverage cutting-edge AI technology for better product discovery, 
+                  pricing, and customer engagement.
                 </p>
                 <ul className="space-y-3 text-gray-600">
                   <li className="flex items-center gap-2">

@@ -1,6 +1,5 @@
 'use client'
 
-
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/lib/supabase/auth-context'
 import { createClient } from '@/lib/supabase/client'
@@ -8,21 +7,18 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-
 export default function CheckoutPage() {
-  const { items, totalPrice, clearCart } = useCart()
-  const { user, loading } = useAuth()
-  const router = useRouter()
-  const supabase = createClient()
+  const { items, totalPrice, clearCart } = useCart()
+  const { user, loading } = useAuth()
+  const router = useRouter()
+  const supabase = createClient()
 
-
-  const [formLoading, setFormLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    fullName: '',
-    address: '',
-    pincode: ''
-  })
-
+  const [formLoading, setFormLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    fullName: '',
+    address: '',
+    pincode: ''
+  })
 
   // Show loading while auth is being checked
   if (loading) {
@@ -36,13 +32,11 @@ export default function CheckoutPage() {
     )
   }
 
-
   // Redirect to login if not authenticated
   if (!user) {
     router.push('/auth/login?redirect=/checkout')
     return null
   }
-
 
   if (items.length === 0) {
     return (
@@ -68,54 +62,53 @@ export default function CheckoutPage() {
       </div>
     )
   }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-
     setFormLoading(true)
 
-
     try {
+      // Generate unique order number
       const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       
-      console.log('Creating order for user:', user.id)
-      
-      const { data, error } = await supabase
+      // Prepare shipping address as JSON
+      const shippingAddress = {
+        full_name: formData.fullName,
+        address: formData.address,
+        pincode: formData.pincode
+      }
+
+      // Create order in database
+      const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
           buyer_id: user.id,
           order_number: orderNumber,
           total_amount: totalPrice + 50,
+          shipping_fee: 50,
+          tax_amount: 0,
           status: 'pending',
+          payment_status: 'pending',
           payment_method: 'upi',
-          shipping_address: formData
+          shipping_address: shippingAddress
         })
         .select()
         .single()
 
-
-      if (error) {
-        console.error('Order creation error:', error)
-        alert(`Database Error: ${error.message}\nCode: ${error.code}\nDetails: ${error.details || 'None'}`)
-        throw error
+      if (orderError) {
+        console.error('Order creation error:', orderError)
+        alert(`Failed to create order: ${orderError.message}`)
+        return
       }
-
-
-      console.log('Order created successfully:', data.id)
-
 
       // Insert order items
       const orderItems = items.map(item => ({
-        order_id: data.id,
+        order_id: orderData.id,
         product_id: item.id,
         quantity: item.quantity,
         unit_price: item.price,
         total_price: item.price * item.quantity
       }))
-
-
-      console.log('Inserting order items:', orderItems)
-
 
       const { error: itemsError } = await supabase
         .from('order_items')
@@ -123,37 +116,35 @@ export default function CheckoutPage() {
         
       if (itemsError) {
         console.error('Order items error:', itemsError)
-        alert(`Order Items Error: ${itemsError.message}\nCode: ${itemsError.code}`)
-        throw itemsError
+        alert(`Failed to add order items: ${itemsError.message}`)
+        return
       }
 
-
-      console.log('Order items inserted successfully')
-
-
+      // Generate UPI payment link
       const totalAmount = totalPrice + 50
-      const upiId = 'rumurumi72@okhdfcbank'
-      const merchantName = 'Artisan Marketplace'
-      const orderId = data.id.substring(0, 8)
-      
-      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderId}`
-      
-      window.location.href = upiLink
-      
-      setTimeout(() => {
-        clearCart()
-        router.push(`/orders/${data.id}`)
-      }, 2000)
+      const upiId = 'rumurumi72@okhdfcbank'
+      const merchantName = 'Artisan Marketplace'
+      const orderId = orderNumber
+      
+      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderId}`
+      
+      // Open UPI app
+      window.location.href = upiLink
+      
+      // Clear cart and redirect after delay
+      setTimeout(() => {
+        clearCart()
+        alert('Order placed successfully! Order ID: ' + orderNumber)
+        router.push('/dashboard')
+      }, 2000)
 
-
-    } catch (error) {
-      console.error('Order failed:', error)
-      alert('Failed to create order. Please try again.')
-    } finally {
-      setFormLoading(false)
-    }
-  }
-
+    } catch (error) {
+      console.error('Order failed:', error)
+      alert('Failed to create order. Please try again.')
+    } finally {
+      setFormLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#faf8f5' }}>
@@ -199,7 +190,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-
                 <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#926829' }}>
                     Delivery Address *
@@ -216,7 +206,6 @@ export default function CheckoutPage() {
                     placeholder="House no, Street, City, State"
                   />
                 </div>
-
 
                 <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#926829' }}>
@@ -236,7 +225,6 @@ export default function CheckoutPage() {
                     placeholder="Enter 6-digit pincode"
                   />
                 </div>
-
 
                 <div className="pt-4 border-t-2 animate-fade-in" style={{ borderColor: '#e8dfd0', animationDelay: '0.4s' }}>
                   <div className="flex items-center gap-3 mb-4">
@@ -302,13 +290,12 @@ export default function CheckoutPage() {
                 <div className="text-3xl mb-2">↩️</div>
                 <p className="text-xs font-semibold text-gray-700">Easy Returns</p>
               </div>
+            </div>
 
-
-              <div className="mt-5 p-4 rounded-lg" style={{ backgroundColor: '#f5efe6' }}>
-                <p className="text-xs text-gray-600 text-center">
-                  💡 All prices include applicable taxes
-                </p>
-              </div>
+            <div className="mt-5 p-4 rounded-lg" style={{ backgroundColor: '#f5efe6' }}>
+              <p className="text-xs text-gray-600 text-center">
+                💡 All prices include applicable taxes
+              </p>
             </div>
           </div>
 
@@ -321,36 +308,36 @@ export default function CheckoutPage() {
                 <h2 className="text-2xl font-bold" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
                   Order Summary
                 </h2>
-              </div>              <div className="space-y-3 mb-4 pb-4 border-b">
-                {items.map(item => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span>{item.title} × {item.quantity}</span>
-                    <span className="font-semibold">₹{item.price * item.quantity}</span>
-                  </div>
-                ))}
-              </div>
+              </div>
 
+              <div className="space-y-3 mb-4 pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
+                {items.map(item => (
+                  <div key={item.id} className="flex justify-between text-sm">
+                    <span>{item.title} × {item.quantity}</span>
+                    <span className="font-semibold">₹{item.price * item.quantity}</span>
+                  </div>
+                ))}
+              </div>
 
-              <div className="space-y-2 mb-4 pb-4 border-b">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span className="font-semibold">₹{totalPrice}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="font-semibold text-green-600">₹50</span>
-                </div>
-              </div>
+              <div className="space-y-2 mb-4 pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span className="font-semibold">₹{totalPrice}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span className="font-semibold text-green-600">₹50</span>
+                </div>
+              </div>
 
-
-              <div className="flex justify-between font-bold text-lg">
-                <span>Total</span>
-                <span className="text-orange-600">₹{totalPrice + 50}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-} 
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span style={{ color: '#926829' }}>₹{totalPrice + 50}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
