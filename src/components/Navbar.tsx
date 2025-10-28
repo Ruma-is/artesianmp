@@ -11,6 +11,7 @@ export default function Navbar() {
   const router = useRouter()
   const { totalItems } = useCart()
   const [visible, setVisible] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const triggerRef = useRef<HTMLDivElement | null>(null)
@@ -66,37 +67,39 @@ export default function Navbar() {
   if (!isAuthPage) {
     return (
       <nav className="shadow-lg sticky top-0 z-50 backdrop-blur-sm animate-slide-down" style={{ backgroundColor: 'rgba(146, 104, 41, 0.98)' }}>
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 md:px-6 py-3 md:py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-white hover:text-gray-100 transition-all duration-300 hover:scale-105 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
+            {/* Logo */}
+            <Link href="/" className="text-xl md:text-2xl font-bold text-white hover:text-gray-100 transition-all duration-300 md:hover:scale-105 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
               Artisan Marketplace
             </Link>
 
-            <div className="flex gap-8 items-center">
+            {/* Desktop Menu */}
+            <div className="hidden lg:flex gap-6 xl:gap-8 items-center">
               <Link 
                 href="/"
-                className={`transition-all duration-300 hover:scale-110 relative group ${isActive('/') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
+                className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
                 Home
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
               <Link 
                 href="/products"
-                className={`transition-all duration-300 hover:scale-110 relative group ${isActive('/products') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
+                className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/products') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
                 Products
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/products') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
               <Link 
                 href="/dashboard"
-                className={`transition-all duration-300 hover:scale-110 relative group ${isActive('/dashboard') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
+                className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/dashboard') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
                 Dashboard
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/dashboard') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
               <Link 
                 href="/cart"
-                className={`relative transition-all duration-300 hover:scale-110 group ${isActive('/cart') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
+                className={`relative transition-all duration-300 hover:scale-110 group text-sm xl:text-base ${isActive('/cart') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
                 🛒 Cart
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/cart') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
                 {totalItems > 0 && (
@@ -111,7 +114,7 @@ export default function Navbar() {
                   {user ? (
                     <button
                       onClick={handleLogout}
-                      className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform"
+                      className="bg-white px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform text-sm xl:text-base"
                       style={{ color: '#926829' }}
                     >
                       Logout
@@ -120,14 +123,14 @@ export default function Navbar() {
                     <>
                       <Link
                         href="/auth/login"
-                        className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110"
+                        className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110 text-sm xl:text-base"
                       >
                         Login
                       </Link>
 
                       <Link
                         href="/auth/signup"
-                        className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform"
+                        className="bg-white px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform text-sm xl:text-base"
                         style={{ color: '#926829' }}
                       >
                         Sign Up
@@ -137,7 +140,98 @@ export default function Navbar() {
                 </>
               )}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+              aria-label="Toggle mobile menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
+
+          {/* Mobile Menu Dropdown */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden mt-4 pb-4 space-y-3 border-t border-white/20 pt-4 animate-slide-down">
+              <Link 
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
+                style={{ minHeight: '44px' }}
+              >
+                Home
+              </Link>
+
+              <Link 
+                href="/products"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/products') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
+                style={{ minHeight: '44px' }}
+              >
+                Products
+              </Link>
+
+              <Link 
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/dashboard') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
+                style={{ minHeight: '44px' }}
+              >
+                Dashboard
+              </Link>
+
+              <Link 
+                href="/cart"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/cart') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
+                style={{ minHeight: '44px' }}
+              >
+                🛒 Cart {totalItems > 0 && `(${totalItems})`}
+              </Link>
+
+              {!loading && (
+                <>
+                  {user ? (
+                    <button
+                      onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                      className="w-full bg-white py-2 px-4 rounded-lg hover:bg-gray-100 transition-all font-semibold text-left text-base"
+                      style={{ color: '#926829', minHeight: '44px' }}
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <>
+                      <Link
+                        href="/auth/login"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block py-2 px-4 rounded-lg text-gray-100 hover:bg-white/10 transition-all text-base"
+                        style={{ minHeight: '44px' }}
+                      >
+                        Login
+                      </Link>
+
+                      <Link
+                        href="/auth/signup"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block bg-white py-2 px-4 rounded-lg hover:bg-gray-100 transition-all font-semibold text-base"
+                        style={{ color: '#926829', minHeight: '44px' }}
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
       </nav>
     )

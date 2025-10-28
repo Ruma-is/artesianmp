@@ -23,10 +23,10 @@ export default function CheckoutPage() {
   // Show loading while auth is being checked
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f5' }}>
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#faf8f5' }}>
         <div className="text-center animate-fade-in">
-          <div className="text-6xl mb-4 animate-bounce-slow">⏳</div>
-          <p className="text-2xl font-semibold" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>Loading...</p>
+          <div className="text-5xl md:text-6xl mb-3 md:mb-4 animate-bounce-slow">⏳</div>
+          <p className="text-xl md:text-2xl font-semibold" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>Loading...</p>
         </div>
       </div>
     )
@@ -40,19 +40,19 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f5' }}>
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#faf8f5' }}>
         <div className="text-center animate-fade-in">
-          <div className="text-8xl mb-6 animate-bounce-subtle">🛒</div>
-          <h2 className="text-4xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
+          <div className="text-6xl md:text-7xl lg:text-8xl mb-4 md:mb-6 animate-bounce-subtle">🛒</div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
             Your Cart is Empty
           </h2>
-          <div className="w-24 h-1.5 mx-auto rounded-full mb-6 animate-expand-center" style={{ backgroundColor: '#926829' }}></div>
-          <p className="text-xl text-gray-600 mb-8">
+          <div className="w-20 md:w-24 h-1.5 mx-auto rounded-full mb-4 md:mb-6 animate-expand-center" style={{ backgroundColor: '#926829' }}></div>
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8">
             Add some handcrafted items to proceed with checkout
           </p>
           <Link href="/products">
-            <button className="px-10 py-4 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl"
-                    style={{ backgroundColor: '#926829' }}
+            <button className="px-8 md:px-10 py-3 md:py-4 text-white rounded-xl font-semibold transition-all duration-300 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 shadow-lg md:hover:shadow-2xl text-sm md:text-base"
+                    style={{ backgroundColor: '#926829', minHeight: '44px' }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7a5621')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}>
               Browse Products
@@ -149,30 +149,30 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#faf8f5' }}>
       {/* Header Section */}
-      <div className="border-b py-6" style={{ backgroundColor: '#f5efe6', borderColor: '#e8dfd0' }}>
-        <div className="max-w-6xl mx-auto px-6">
+      <div className="border-b py-5 md:py-6" style={{ backgroundColor: '#f5efe6', borderColor: '#e8dfd0' }}>
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="animate-fade-in">
-            <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
               Secure Checkout
             </h1>
-            <p className="text-gray-600">Complete your order and support traditional artisans</p>
+            <p className="text-gray-600 text-sm md:text-base">Complete your order and support traditional artisans</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid lg:grid-cols-5 gap-8">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
+        <div className="grid lg:grid-cols-5 gap-6 md:gap-8">
           {/* Checkout Form - Takes 3 columns */}
           <div className="lg:col-span-3">
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 animate-slide-up" style={{ borderColor: '#e8dfd0' }}>
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
-                <span className="text-3xl">🚚</span>
-                <h2 className="text-2xl font-bold" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
+            <div className="bg-white p-5 md:p-6 rounded-xl shadow-lg border-2 animate-slide-up" style={{ borderColor: '#e8dfd0' }}>
+              <div className="flex items-center gap-2 md:gap-3 mb-5 md:mb-6 pb-3 md:pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
+                <span className="text-2xl md:text-3xl">🚚</span>
+                <h2 className="text-xl md:text-2xl font-bold" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
                   Shipping Information
                 </h2>
               </div>
               
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
                 <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#926829' }}>
                     Full Name *
@@ -182,8 +182,8 @@ export default function CheckoutPage() {
                     required
                     value={formData.fullName}
                     onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                    className="w-full px-4 py-3 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:scale-[1.02]"
-                    style={{ borderColor: '#e8dfd0' }}
+                    className="w-full px-4 py-3 border-2 rounded-lg transition-all duration-300 focus:outline-none text-base"
+                    style={{ borderColor: '#e8dfd0', minHeight: '44px' }}
                     onFocus={(e) => (e.currentTarget.style.borderColor = '#926829')}
                     onBlur={(e) => (e.currentTarget.style.borderColor = '#e8dfd0')}
                     placeholder="Enter your full name"
@@ -199,7 +199,7 @@ export default function CheckoutPage() {
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
                     rows={4}
-                    className="w-full px-4 py-3 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:scale-[1.02]"
+                    className="w-full px-4 py-3 border-2 rounded-lg transition-all duration-300 focus:outline-none text-base"
                     style={{ borderColor: '#e8dfd0' }}
                     onFocus={(e) => (e.currentTarget.style.borderColor = '#926829')}
                     onBlur={(e) => (e.currentTarget.style.borderColor = '#e8dfd0')}
@@ -218,34 +218,34 @@ export default function CheckoutPage() {
                     maxLength={6}
                     value={formData.pincode}
                     onChange={(e) => setFormData({...formData, pincode: e.target.value})}
-                    className="w-full px-4 py-3 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:scale-[1.02]"
-                    style={{ borderColor: '#e8dfd0' }}
+                    className="w-full px-4 py-3 border-2 rounded-lg transition-all duration-300 focus:outline-none text-base"
+                    style={{ borderColor: '#e8dfd0', minHeight: '44px' }}
                     onFocus={(e) => (e.currentTarget.style.borderColor = '#926829')}
                     onBlur={(e) => (e.currentTarget.style.borderColor = '#e8dfd0')}
                     placeholder="Enter 6-digit pincode"
                   />
                 </div>
 
-                <div className="pt-4 border-t-2 animate-fade-in" style={{ borderColor: '#e8dfd0', animationDelay: '0.4s' }}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-2xl">💳</span>
-                    <h3 className="font-bold text-lg" style={{ color: '#926829' }}>Payment Method</h3>
+                <div className="pt-3 md:pt-4 border-t-2 animate-fade-in" style={{ borderColor: '#e8dfd0', animationDelay: '0.4s' }}>
+                  <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                    <span className="text-xl md:text-2xl">💳</span>
+                    <h3 className="font-bold text-base md:text-lg" style={{ color: '#926829' }}>Payment Method</h3>
                   </div>
-                  <div className="p-5 border-2 rounded-xl transition-all duration-300 hover:shadow-md" 
+                  <div className="p-4 md:p-5 border-2 rounded-xl transition-all duration-300 md:hover:shadow-md" 
                        style={{ borderColor: '#926829', backgroundColor: '#f5efe6' }}>
                     <label className="flex items-center justify-between cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <input type="radio" checked readOnly className="w-5 h-5 accent-[#926829]" />
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <input type="radio" checked readOnly className="w-4 h-4 md:w-5 md:h-5 accent-[#926829]" />
                         <div>
-                          <p className="font-bold text-lg" style={{ color: '#926829' }}>UPI Payment</p>
-                          <p className="text-sm text-gray-600">Google Pay, PhonePe, Paytm & more</p>
+                          <p className="font-bold text-base md:text-lg" style={{ color: '#926829' }}>UPI Payment</p>
+                          <p className="text-xs md:text-sm text-gray-600">Google Pay, PhonePe, Paytm & more</p>
                         </div>
                       </div>
-                      <span className="text-4xl">📱</span>
+                      <span className="text-3xl md:text-4xl">📱</span>
                     </label>
                   </div>
                   
-                  <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: '#fff9e6' }}>
+                  <div className="mt-3 md:mt-4 p-3 rounded-lg" style={{ backgroundColor: '#fff9e6' }}>
                     <p className="text-xs text-gray-600 flex items-center gap-2">
                       <span>🔒</span>
                       <span>Your payment is secured with 256-bit encryption</span>
@@ -256,8 +256,8 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="w-full py-4 text-white rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mt-6 flex items-center justify-center gap-2"
-                  style={{ backgroundColor: '#926829' }}
+                  className="w-full py-3 md:py-4 text-white rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 shadow-lg md:hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mt-5 md:mt-6 flex items-center justify-center gap-2"
+                  style={{ backgroundColor: '#926829', minHeight: '48px' }}
                   onMouseEnter={(e) => !formLoading && (e.currentTarget.style.backgroundColor = '#7a5621')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}
                 >
@@ -277,22 +277,22 @@ export default function CheckoutPage() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="grid grid-cols-3 gap-4 mt-6 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-              <div className="bg-white p-4 rounded-lg shadow border text-center" style={{ borderColor: '#e8dfd0' }}>
-                <div className="text-3xl mb-2">🔒</div>
+            <div className="grid grid-cols-3 gap-3 md:gap-4 mt-4 md:mt-6 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+              <div className="bg-white p-3 md:p-4 rounded-lg shadow border text-center" style={{ borderColor: '#e8dfd0' }}>
+                <div className="text-2xl md:text-3xl mb-1 md:mb-2">🔒</div>
                 <p className="text-xs font-semibold text-gray-700">Secure Payment</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow border text-center" style={{ borderColor: '#e8dfd0' }}>
-                <div className="text-3xl mb-2">✅</div>
+              <div className="bg-white p-3 md:p-4 rounded-lg shadow border text-center" style={{ borderColor: '#e8dfd0' }}>
+                <div className="text-2xl md:text-3xl mb-1 md:mb-2">✅</div>
                 <p className="text-xs font-semibold text-gray-700">100% Authentic</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow border text-center" style={{ borderColor: '#e8dfd0' }}>
-                <div className="text-3xl mb-2">↩️</div>
+              <div className="bg-white p-3 md:p-4 rounded-lg shadow border text-center" style={{ borderColor: '#e8dfd0' }}>
+                <div className="text-2xl md:text-3xl mb-1 md:mb-2">↩️</div>
                 <p className="text-xs font-semibold text-gray-700">Easy Returns</p>
               </div>
             </div>
 
-            <div className="mt-5 p-4 rounded-lg" style={{ backgroundColor: '#f5efe6' }}>
+            <div className="mt-4 md:mt-5 p-3 md:p-4 rounded-lg" style={{ backgroundColor: '#f5efe6' }}>
               <p className="text-xs text-gray-600 text-center">
                 💡 All prices include applicable taxes
               </p>
@@ -301,25 +301,25 @@ export default function CheckoutPage() {
 
           {/* Order Summary - Takes 2 columns */}
           <div className="lg:col-span-2">
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 sticky top-24 animate-scale-in" 
+            <div className="bg-white p-5 md:p-6 rounded-xl shadow-lg border-2 lg:sticky lg:top-24 animate-scale-in" 
                  style={{ borderColor: '#e8dfd0' }}>
-              <div className="flex items-center gap-3 mb-5 pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
-                <span className="text-2xl">📦</span>
-                <h2 className="text-2xl font-bold" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-5 pb-3 md:pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
+                <span className="text-xl md:text-2xl">📦</span>
+                <h2 className="text-xl md:text-2xl font-bold" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
                   Order Summary
                 </h2>
               </div>
 
-              <div className="space-y-3 mb-4 pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
+              <div className="space-y-2 md:space-y-3 mb-3 md:mb-4 pb-3 md:pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
                 {items.map(item => (
-                  <div key={item.id} className="flex justify-between text-sm">
+                  <div key={item.id} className="flex justify-between text-xs md:text-sm">
                     <span>{item.title} × {item.quantity}</span>
                     <span className="font-semibold">₹{item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-2 mb-4 pb-4 border-b" style={{ borderColor: '#e8dfd0' }}>
+              <div className="space-y-2 mb-3 md:mb-4 pb-3 md:pb-4 border-b text-sm md:text-base" style={{ borderColor: '#e8dfd0' }}>
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="font-semibold">₹{totalPrice}</span>
@@ -330,7 +330,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="flex justify-between font-bold text-lg">
+              <div className="flex justify-between font-bold text-base md:text-lg">
                 <span>Total</span>
                 <span style={{ color: '#926829' }}>₹{totalPrice + 50}</span>
               </div>
