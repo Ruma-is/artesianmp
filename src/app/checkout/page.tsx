@@ -3,6 +3,7 @@
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/lib/supabase/auth-context'
 import { createClient } from '@/lib/supabase/client'
+import { initiateUPIPayment } from '@/lib/utils/upiPayment'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -68,8 +69,32 @@ export default function CheckoutPage() {
     setFormLoading(true)
 
     try {
+      // Verify user is still authenticated
+      const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser()
+      
+      if (authError || !currentUser) {
+        console.error('❌ Authentication error:', authError)
+        alert('Your session has expired. Please log in again.')
+        router.push('/auth/login?redirect=/checkout')
+        return
+      }
+
+      // Double-check that the user ID matches
+      if (currentUser.id !== user?.id) {
+        console.error('❌ User ID mismatch!')
+        console.error('Context user:', user?.id)
+        console.error('Current user:', currentUser.id)
+        alert('Authentication error. Please log in again.')
+        router.push('/auth/login?redirect=/checkout')
+        return
+      }
+
       // Generate unique order number
       const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      
+      console.log('🛒 Creating order for user:', currentUser.id)
+      console.log('🛒 User email:', currentUser.email)
+      console.log('🛒 Order number:', orderNumber)
       
       // Prepare shipping address as JSON
       const shippingAddress = {
@@ -78,11 +103,11 @@ export default function CheckoutPage() {
         pincode: formData.pincode
       }
 
-      // Create order in database
+      // Create order in database with verified user ID
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
-          buyer_id: user.id,
+          buyer_id: currentUser.id,  // Use verified current user ID
           order_number: orderNumber,
           total_amount: totalPrice + 50,
           shipping_fee: 50,
@@ -96,10 +121,16 @@ export default function CheckoutPage() {
         .single()
 
       if (orderError) {
-        console.error('Order creation error:', orderError)
+        console.error('❌ Order creation error:', orderError)
         alert(`Failed to create order: ${orderError.message}`)
+        setFormLoading(false)
         return
       }
+      
+      console.log('✅ Order created successfully!')
+      console.log('✅ Order ID:', orderData.id)
+      console.log('✅ Order Number:', orderData.order_number)
+      console.log('✅ Buyer ID:', orderData.buyer_id)
 
       // Insert order items
       const orderItems = items.map(item => ({
@@ -115,33 +146,40 @@ export default function CheckoutPage() {
         .insert(orderItems)
         
       if (itemsError) {
-        console.error('Order items error:', itemsError)
+        console.error('❌ Order items error:', itemsError)
         alert(`Failed to add order items: ${itemsError.message}`)
+        setFormLoading(false)
         return
       }
 
-      // Generate UPI payment link
+      console.log('✅ Order items created successfully!')
+
+      // Clear cart immediately after successful order creation
+      clearCart()
+
+      // Use Direct UPI Payment (PhonePe gateway requires merchant onboarding)
       const totalAmount = totalPrice + 50
       const upiId = 'rumurumi72@okhdfcbank'
       const merchantName = 'Artisan Marketplace'
-      const orderId = orderNumber
+      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderNumber}`
       
-      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderId}`
+      console.log('� Using Direct UPI Payment')
+      console.log('📱 UPI ID:', upiId)
+      console.log('� Amount:', totalAmount)
+      
+      alert(`Order created successfully!\n\nOrder Number: ${orderNumber}\n\nTotal: ₹${totalAmount}\n\nOpening UPI payment...`)
       
       // Open UPI app
       window.location.href = upiLink
       
-      // Clear cart and redirect after delay
+      // Redirect to orders after small delay
       setTimeout(() => {
-        clearCart()
-        alert('Order placed successfully! Order ID: ' + orderNumber)
-        router.push('/dashboard')
+        router.push('/orders')
       }, 2000)
 
     } catch (error) {
-      console.error('Order failed:', error)
+      console.error('❌ Order failed:', error)
       alert('Failed to create order. Please try again.')
-    } finally {
       setFormLoading(false)
     }
   }

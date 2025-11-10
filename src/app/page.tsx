@@ -5,39 +5,12 @@ import Link from 'next/link';
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
-  const [showInstall, setShowInstall] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setShowInstall(true);
-    };
-
-    window.addEventListener('beforeinstallprompt', handler);
-
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      setShowInstall(false);
-    }
-    
-    setDeferredPrompt(null);
-  };
 
   return (
     <div className="min-h-screen overflow-hidden" style={{ backgroundColor: '#faf8f5' }}>
@@ -54,25 +27,6 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 md:px-6 max-w-6xl mx-auto">
-          {/* Install PWA Button */}
-          {showInstall && (
-            <button
-              style={{
-                background: '#926829',
-                color: '#fff',
-                padding: '0.75em 1.5em',
-                borderRadius: '0.5em',
-                border: 'none',
-                margin: '0.5em 0 1.5em 0',
-                fontWeight: 'bold',
-                fontSize: '1rem'
-              }}
-              onClick={handleInstallClick}
-            >
-              Install PWA
-            </button>
-          )}
-          
           {/* Scroll-based Parallax Badge */}
           <div 
             className="inline-block mb-6 md:mb-8 px-4 md:px-6 py-2 md:py-3 bg-white/10 backdrop-blur-md rounded-full border-2 border-white/30 animate-fade-in"

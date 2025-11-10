@@ -28,7 +28,7 @@ export default async function ProductsPage() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12">
           <div className="bg-white p-4 md:p-6 rounded-lg md:rounded-xl shadow-lg text-center transform active:scale-95 md:hover:scale-105 transition-all duration-300 animate-scale-in border-2" style={{ borderColor: '#e8dfd0' }}>
-            <div className="text-2xl md:text-3xl font-bold mb-1" style={{ color: '#926829' }}>{products.length}</div>
+            <div className="text-2xl md:text-3xl font-bold mb-1" style={{ color: '#926829' }} suppressHydrationWarning>{products.length}</div>
             <div className="text-xs md:text-sm text-gray-600">Products Available</div>
           </div>
           <div className="bg-white p-4 md:p-6 rounded-lg md:rounded-xl shadow-lg text-center transform active:scale-95 md:hover:scale-105 transition-all duration-300 animate-scale-in border-2" style={{ borderColor: '#e8dfd0', animationDelay: '0.1s' }}>
