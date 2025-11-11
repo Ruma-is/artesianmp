@@ -4,7 +4,7 @@ import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/lib/supabase/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { initiateUPIPayment } from '@/lib/utils/upiPayment'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -21,6 +21,13 @@ export default function CheckoutPage() {
     pincode: ''
   })
 
+  // Redirect to login if not authenticated (using useEffect to avoid render issues)
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login?redirect=/checkout')
+    }
+  }, [user, loading, router])
+
   // Show loading while auth is being checked
   if (loading) {
     return (
@@ -33,9 +40,8 @@ export default function CheckoutPage() {
     )
   }
 
-  // Redirect to login if not authenticated
+  // Show nothing while redirecting
   if (!user) {
-    router.push('/auth/login?redirect=/checkout')
     return null
   }
 
@@ -157,25 +163,54 @@ export default function CheckoutPage() {
       // Clear cart immediately after successful order creation
       clearCart()
 
-      // Use Direct UPI Payment (PhonePe gateway requires merchant onboarding)
+      // Initiate PhonePe Payment Gateway
       const totalAmount = totalPrice + 50
-      const upiId = 'rumurumi72@okhdfcbank'
-      const merchantName = 'Artisan Marketplace'
-      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderNumber}`
       
-      console.log('� Using Direct UPI Payment')
-      console.log('📱 UPI ID:', upiId)
-      console.log('� Amount:', totalAmount)
-      
-      alert(`Order created successfully!\n\nOrder Number: ${orderNumber}\n\nTotal: ₹${totalAmount}\n\nOpening UPI payment...`)
-      
-      // Open UPI app
-      window.location.href = upiLink
-      
-      // Redirect to orders after small delay
-      setTimeout(() => {
-        router.push('/orders')
-      }, 2000)
+      try {
+        console.log('🔐 Initiating PhonePe Payment Gateway...')
+        console.log('💰 Amount:', totalAmount)
+        console.log('📝 Order ID:', orderData.id)
+        console.log('🔢 Order Number:', orderNumber)
+        
+        const paymentResult = await initiateUPIPayment({
+          orderId: orderData.id,
+          orderNumber: orderNumber,
+          amount: totalAmount,
+          customerName: formData.fullName,
+          customerEmail: currentUser.email || '',
+          callbackUrl: `${window.location.origin}/payment/callback`
+        })
+
+        console.log('📊 Payment Result:', paymentResult)
+
+        if (paymentResult.success && paymentResult.paymentUrl) {
+          console.log('✅ PhonePe payment initiated successfully!')
+          console.log('🔗 Redirecting to:', paymentResult.paymentUrl)
+          
+          // Redirect to PhonePe payment page
+          window.location.href = paymentResult.paymentUrl
+        } else {
+          throw new Error(paymentResult.error || 'PhonePe payment initiation failed')
+        }
+      } catch (phonepeError) {
+        console.error('❌ PhonePe payment failed:', phonepeError)
+        
+        // Fallback to Direct UPI
+        console.log('📱 Falling back to Direct UPI Payment...')
+        const upiId = 'rumurumi72@okhdfcbank'
+        const merchantName = 'Artisan Marketplace'
+        const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderNumber}`
+        
+        alert(`Order created successfully!\n\nOrder Number: ${orderNumber}\n\n⚠️ PhonePe gateway temporarily unavailable.\nRedirecting to direct UPI payment...\n\nTotal: ₹${totalAmount}`)
+        
+        // Open UPI app
+        window.location.href = upiLink
+        
+        // Redirect to orders after delay
+        setTimeout(() => {
+          router.push('/orders')
+        }, 2000)
+      }
 
     } catch (error) {
       console.error('❌ Order failed:', error)
