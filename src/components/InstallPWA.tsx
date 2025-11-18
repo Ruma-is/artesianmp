@@ -36,10 +36,12 @@ export default function InstallPWA() {
   return (
     <button
       onClick={handleInstall}
-      className="fixed top-20 right-6 z-50 px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 font-semibold text-white"
+      className="fixed top-20 right-6 z-50 px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 font-semibold"
       style={{ 
-        backgroundColor: '#926829',
-        boxShadow: '0 8px 32px rgba(146, 104, 41, 0.4)'
+        backgroundColor: '#ffffff',
+        color: '#926829',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+        border: '2px solid #926829'
       }}
     >
       <span>📱</span>
