@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { verifyUPIPayment } from '@/lib/utils/upiPayment'
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -172,5 +172,20 @@ export default function PaymentCallbackPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PaymentCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f5' }}>
+        <div className="text-center">
+          <div className="text-7xl mb-6 animate-bounce">⏳</div>
+          <h1 className="text-3xl font-bold" style={{ color: '#926829' }}>Loading...</h1>
+        </div>
+      </div>
+    }>
+      <PaymentCallbackContent />
+    </Suspense>
   )
 }
