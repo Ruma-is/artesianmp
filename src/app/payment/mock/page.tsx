@@ -2,9 +2,9 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 
-export default function MockPaymentPage() {
+function MockPaymentContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isProcessing, setIsProcessing] = useState(false)
@@ -134,5 +134,20 @@ export default function MockPaymentPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function MockPaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f5' }}>
+        <div className="text-center">
+          <div className="text-7xl mb-6 animate-bounce">⏳</div>
+          <h1 className="text-3xl font-bold" style={{ color: '#926829' }}>Loading...</h1>
+        </div>
+      </div>
+    }>
+      <MockPaymentContent />
+    </Suspense>
   )
 }
