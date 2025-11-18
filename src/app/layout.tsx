@@ -6,6 +6,7 @@ import InstallPWA from '@/components/InstallPWA'
 import Script from 'next/script'
 import './globals.css'
 
+// Rural Connection - Empowering Rural Artisans
 export default function RootLayout({
   children,
 }: {
