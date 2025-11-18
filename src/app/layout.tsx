@@ -1,6 +1,9 @@
 import { CartProvider } from '@/contexts/CartContext'
 import { AuthProvider } from '@/lib/supabase/auth-context'
 import Navbar from '@/components/Navbar'
+import GeminiChatbot from '@/components/GeminiChatbot'
+import InstallPWA from '@/components/InstallPWA'
+import Script from 'next/script'
 import './globals.css'
 
 export default function RootLayout({
@@ -11,16 +14,38 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Artisan Marketplace</title>
+        <title>Rural Connection</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#926829" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body>
         <AuthProvider>
           <CartProvider>
             <Navbar />
             {children}
+            <GeminiChatbot />
+            <InstallPWA />
           </CartProvider>
         </AuthProvider>
+        
+        {/* Service Worker Registration */}
+        <Script id="sw-register" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                  .then((registration) => {
+                    console.log('SW registered:', registration);
+                  })
+                  .catch((error) => {
+                    console.log('SW registration failed:', error);
+                  });
+              });
+            }
+          `}
+        </Script>
       </body>
     </html>
   )

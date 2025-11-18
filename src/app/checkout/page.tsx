@@ -138,14 +138,33 @@ export default function CheckoutPage() {
       console.log('✅ Order Number:', orderData.order_number)
       console.log('✅ Buyer ID:', orderData.buyer_id)
 
-      // Insert order items
+      // Fetch product details to get artisan_id for each item
+      const productIds = items.map(item => item.id)
+      const { data: productsData, error: productsError } = await supabase
+        .from('products')
+        .select('id, artisan_id')
+        .in('id', productIds)
+
+      if (productsError) {
+        console.error('⚠️ Warning: Could not fetch product artisan_ids:', productsError)
+      }
+
+      // Create a map of product_id -> artisan_id for quick lookup
+      const artisanIdMap = new Map(
+        productsData?.map(p => [p.id, p.artisan_id]) || []
+      )
+
+      // Insert order items WITH artisan_id
       const orderItems = items.map(item => ({
         order_id: orderData.id,
         product_id: item.id,
+        artisan_id: artisanIdMap.get(item.id) || null, // Add artisan_id from product
         quantity: item.quantity,
         unit_price: item.price,
         total_price: item.price * item.quantity
       }))
+
+      console.log('📦 Creating order items with artisan_id:', orderItems)
 
       const { error: itemsError } = await supabase
         .from('order_items')
@@ -198,7 +217,7 @@ export default function CheckoutPage() {
         // Fallback to Direct UPI
         console.log('📱 Falling back to Direct UPI Payment...')
         const upiId = 'rumurumi72@okhdfcbank'
-        const merchantName = 'Artisan Marketplace'
+        const merchantName = 'Rural Connection'
         const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=Order%20${orderNumber}`
         
         alert(`Order created successfully!\n\nOrder Number: ${orderNumber}\n\n⚠️ PhonePe gateway temporarily unavailable.\nRedirecting to direct UPI payment...\n\nTotal: ₹${totalAmount}`)

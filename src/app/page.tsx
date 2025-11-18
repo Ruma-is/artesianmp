@@ -36,8 +36,8 @@ export default function Home() {
 
           {/* Main Heading with Stagger Animation */}
           <div className="mb-4 md:mb-6 animate-slide-in-down">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-3 md:mb-4 tracking-tight animate-fade-in" style={{ fontFamily: 'Georgia, serif' }}>
-              Artisan Marketplace
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 lg:mb-8 leading-tight text-white" style={{ fontFamily: 'Georgia, serif' }}>
+              Rural Connection
             </h1>
             <div className="w-24 md:w-32 h-1 md:h-1.5 bg-white mx-auto rounded-full animate-expand-center"></div>
           </div>
@@ -290,7 +290,7 @@ export default function Home() {
       <footer className="py-8 md:py-12 text-center text-gray-600" style={{ backgroundColor: '#f5efe6' }}>
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <p className="text-base md:text-lg mb-2" style={{ fontFamily: 'Georgia, serif' }}>
-            <span style={{ color: '#926829', fontWeight: 'bold' }}>Artisan Marketplace</span> - Preserving Traditions, Empowering Communities
+            <span style={{ color: '#926829', fontWeight: 'bold' }}>Rural Connection</span> - Preserving Traditions, Empowering Communities
           </p>
           <p className="text-xs md:text-sm">© 2025 All rights reserved. Made with ❤️ for artisans.</p>
         </div>

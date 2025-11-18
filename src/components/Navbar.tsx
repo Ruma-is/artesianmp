@@ -71,7 +71,7 @@ export default function Navbar() {
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link href="/" className="text-xl md:text-2xl font-bold text-white hover:text-gray-100 transition-all duration-300 md:hover:scale-105 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-              Artisan Marketplace
+              Rural Connection
             </Link>
 
             {/* Desktop Menu */}
@@ -263,7 +263,7 @@ export default function Navbar() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <Link href="/" className="text-2xl font-bold text-white hover:text-gray-100 transition-all duration-300 hover:scale-105 tracking-wide animate-fade-in" style={{ fontFamily: 'Georgia, serif' }}>
-              Artisan Marketplace
+              Rural Connection
             </Link>
 
             <div className="flex gap-8 items-center">

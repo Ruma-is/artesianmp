@@ -56,7 +56,7 @@ export default function SignupPage() {
         {/* Animated Content */}
         <div className="relative z-10 max-w-md text-center animate-slide-in-left">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 md:mb-6 tracking-tight animate-fade-in">
-            Artisan Marketplace
+            Rural Connection
           </h1>
           <div className="w-20 md:w-24 h-1 bg-white mx-auto mb-4 md:mb-6 animate-expand"></div>
           <p className="text-lg md:text-xl font-light leading-relaxed opacity-90 animate-fade-in-delay-1">
@@ -74,7 +74,7 @@ export default function SignupPage() {
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-6 md:mb-8 animate-fade-in pt-4">
             <h1 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: '#926829' }}>
-              Artisan Marketplace
+              Rural Connection
             </h1>
             <div className="w-12 md:w-16 h-1 mx-auto animate-expand" style={{ backgroundColor: '#926829' }}></div>
           </div>

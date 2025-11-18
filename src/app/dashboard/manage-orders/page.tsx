@@ -65,22 +65,30 @@ export default function ManageOrdersPage() {
     setDataLoading(true)
     
     try {
+      console.log('🔍 Fetching orders for seller:', user.id)
+      console.log('👤 User email:', user.email)
+      
       // First, get all products owned by this user
       const { data: userProducts, error: productsError } = await supabase
         .from('products')
-        .select('id')
+        .select('id, title, artisan_id')
         .eq('artisan_id', user.id)
+
+      console.log('📦 Products query result:', userProducts)
+      console.log('❌ Products query error:', productsError)
 
       if (productsError) throw productsError
 
       if (!userProducts || userProducts.length === 0) {
-        console.log('No products found for this seller')
+        console.log('⚠️ No products found for this seller')
+        console.log('💡 Make sure products have artisan_id:', user.id)
         setOrders([])
         setDataLoading(false)
         return
       }
 
       const productIds = userProducts.map(p => p.id)
+      console.log('🆔 Product IDs:', productIds)
 
       // Get order items for these products
       const { data: orderItems, error: itemsError } = await supabase
@@ -88,10 +96,14 @@ export default function ManageOrdersPage() {
         .select('*')
         .in('product_id', productIds)
 
+      console.log('🛒 Order items result:', orderItems)
+      console.log('❌ Order items error:', itemsError)
+
       if (itemsError) throw itemsError
 
       if (!orderItems || orderItems.length === 0) {
-        console.log('No orders found for your products')
+        console.log('⚠️ No orders found for your products')
+        console.log('💡 Product IDs searched:', productIds)
         setOrders([])
         setDataLoading(false)
         return
@@ -99,6 +111,7 @@ export default function ManageOrdersPage() {
 
       // Get unique order IDs
       const orderIds = [...new Set(orderItems.map(item => item.order_id))]
+      console.log('📋 Order IDs found:', orderIds)
 
       // Fetch full order details
       const { data: ordersData, error: ordersError } = await supabase

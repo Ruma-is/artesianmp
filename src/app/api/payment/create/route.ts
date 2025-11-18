@@ -48,17 +48,41 @@ export async function POST(request: NextRequest) {
       clientIdLength: clientId?.length,
     })
 
+    // **MOCK MODE FOR TESTING** - Since PhonePe credentials don't work without activation
+    // This simulates a successful PhonePe payment for development/testing
+    const ENABLE_MOCK_MODE = true // Set to false when you have real activated credentials
+
+    if (ENABLE_MOCK_MODE && clientId === 'PHONEPEPGUAT') {
+      console.log('🧪 MOCK MODE: Simulating PhonePe payment for testing')
+      
+      const mockTransactionId = `MOCK${Date.now()}`
+      const mockPaymentUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/mock?orderId=${orderId}&amount=${amount}&txnId=${mockTransactionId}`
+      
+      console.log('✅ Mock payment created successfully')
+      console.log('🔗 Mock payment URL:', mockPaymentUrl)
+      
+      return NextResponse.json({
+        success: true,
+        paymentId: mockTransactionId,
+        paymentUrl: mockPaymentUrl,
+        message: 'Mock payment created for testing',
+        isMock: true
+      })
+    }
+
+    // **REAL PHONEPE API CALL** - Only when mock mode is disabled
     // PhonePe Business API Configuration
     const merchantId = clientId
     const saltKey = clientSecret
-    const saltIndex = "1" // Usually 1 for production
+    const saltIndex = "1"
     
     // Generate unique merchant transaction ID
     const merchantTransactionId = `MT${Date.now()}${Math.random().toString(36).substring(2, 9).toUpperCase()}`
     
-    // PhonePe API endpoint - Using UAT/Sandbox for testing
-    const phonePeApiUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay'
-    const apiEndpoint = '/pg/v1/pay' // Used for X-VERIFY hash
+    // PhonePe API endpoint - Using UAT environment
+    // UAT endpoint for testing with PHONEPEPGUAT credentials
+    const phonePeApiUrl = 'https://api.phonepe.com/apis/hermes/pg/v1/pay'
+    const apiEndpoint = '/apis/hermes/pg/v1/pay' // Full path for X-VERIFY hash
     
     // Prepare PhonePe payment request
     const paymentPayload = {
