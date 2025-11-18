@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural Connection - Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #faf8f5;
+        }
+        h1 { color: #926829; }
+        canvas {
+            border: 2px solid #926829;
+            margin: 20px 0;
+            border-radius: 16px;
+        }
+        button {
+            background: #926829;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #7a5621; }
+        .preview { display: flex; gap: 20px; flex-wrap: wrap; }
+        .info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Rural Connection Icon Generator</h1>
+    
+    <div class="info">
+        <h3>📋 Instructions:</h3>
+        <ol>
+            <li>Click "Generate 192x192 Icon" and "Generate 512x512 Icon"</li>
+            <li>Right-click each icon → Save Image As</li>
+            <li>Save as <code>icon-192x192.png</code> and <code>icon-512x512.png</code></li>
+            <li>Replace files in <code>public/</code> folder</li>
+            <li>Commit and push to deploy</li>
+        </ol>
+    </div>
+
+    <div class="preview">
+        <div>
+            <h3>192x192 Icon</h3>
+            <canvas id="icon192" width="192" height="192"></canvas>
+            <br>
+            <button onclick="generateIcon(192)">Generate 192x192 Icon</button>
+            <button onclick="downloadIcon(192)">Download</button>
+        </div>
+        
+        <div>
+            <h3>512x512 Icon</h3>
+            <canvas id="icon512" width="512" height="512"></canvas>
+            <br>
+            <button onclick="generateIcon(512)">Generate 512x512 Icon</button>
+            <button onclick="downloadIcon(512)">Download</button>
+        </div>
+    </div>
+
+    <script>
+        function generateIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background with rounded corners
+            ctx.fillStyle = '#926829';
+            roundRect(ctx, 0, 0, size, size, size * 0.15);
+            ctx.fill();
+            
+            // Center circle
+            const centerX = size / 2;
+            const centerY = size / 2;
+            
+            // Outer circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, size * 0.35, 0, Math.PI * 2);
+            ctx.fillStyle = '#faf8f5';
+            ctx.fill();
+            
+            // Inner design - handshake symbol
+            ctx.strokeStyle = '#926829';
+            ctx.lineWidth = size * 0.04;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Left hand
+            ctx.beginPath();
+            ctx.moveTo(centerX - size * 0.15, centerY);
+            ctx.lineTo(centerX - size * 0.05, centerY - size * 0.08);
+            ctx.stroke();
+            
+            // Right hand
+            ctx.beginPath();
+            ctx.moveTo(centerX + size * 0.15, centerY);
+            ctx.lineTo(centerX + size * 0.05, centerY - size * 0.08);
+            ctx.stroke();
+            
+            // Connecting arc (handshake)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - size * 0.08, size * 0.05, 0, Math.PI, true);
+            ctx.stroke();
+            
+            // Text "RC"
+            ctx.fillStyle = '#926829';
+            ctx.font = `bold ${size * 0.15}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('RC', centerX, centerY + size * 0.08);
+            
+            // Small text at bottom
+            ctx.font = `${size * 0.06}px Arial`;
+            ctx.fillStyle = '#faf8f5';
+            ctx.fillText('Rural Connection', centerX, size * 0.85);
+        }
+        
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+        
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Generate on load
+        window.onload = function() {
+            generateIcon(192);
+            generateIcon(512);
+        };
+    </script>
+</body>
+</html>
