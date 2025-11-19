@@ -24,17 +24,31 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
+  const [isClient, setIsClient] = useState(false)
 
-  // Load from localStorage on mount
+  // Ensure we're on the client side
   useEffect(() => {
-    const saved = localStorage.getItem('cart')
-    if (saved) setItems(JSON.parse(saved))
+    setIsClient(true)
   }, [])
 
-  // Save to localStorage when items change
+  // Load from localStorage on mount (client-side only)
   useEffect(() => {
+    if (!isClient) return
+    const saved = localStorage.getItem('cart')
+    if (saved) {
+      try {
+        setItems(JSON.parse(saved))
+      } catch (error) {
+        console.error('Failed to load cart:', error)
+      }
+    }
+  }, [isClient])
+
+  // Save to localStorage when items change (client-side only)
+  useEffect(() => {
+    if (!isClient) return
     localStorage.setItem('cart', JSON.stringify(items))
-  }, [items])
+  }, [items, isClient])
 
   const addToCart = (product: any) => {
     setItems(current => {
