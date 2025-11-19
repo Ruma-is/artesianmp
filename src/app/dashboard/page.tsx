@@ -6,84 +6,20 @@ import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-// === Mock data for development ===
-const initialOrders = [
-  {
-    id: 1,
-    product: "Handcrafted Lamp",
-    quantity: 2,
-    status: "pending",
-    tracking_number: "",
-    ship_provider: "",
-    shipped_at: null,
-    buyer_id: "mock-user-1",
-    created_at: new Date().toISOString(),
-    total_amount: 2500
-  },
-  {
-    id: 2,
-    product: "Ceramic Vase",
-    quantity: 1,
-    status: "shipped",
-    tracking_number: "TRK123456789",
-    ship_provider: "Blue Dart",
-    shipped_at: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-    buyer_id: "mock-user-1",
-    created_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-    total_amount: 1800
-  },
-  {
-    id: 3,
-    product: "Woven Basket",
-    quantity: 3,
-    status: "delivered",
-    tracking_number: "TRK987654321",
-    ship_provider: "Delhivery",
-    shipped_at: new Date(Date.now() - 604800000).toISOString(), // 7 days ago
-    buyer_id: "mock-user-1",
-    created_at: new Date(Date.now() - 864000000).toISOString(), // 10 days ago
-    total_amount: 4200
-  },
-  {
-    id: 4,
-    product: "Embroidered Cushion Cover",
-    quantity: 4,
-    status: "pending",
-    tracking_number: "",
-    ship_provider: "",
-    shipped_at: null,
-    buyer_id: "mock-user-1",
-    created_at: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-    total_amount: 3200
-  },
-  {
-    id: 5,
-    product: "Wooden Wall Art",
-    quantity: 1,
-    status: "shipped",
-    tracking_number: "TRK456789123",
-    ship_provider: "India Post",
-    shipped_at: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-    buyer_id: "mock-user-1",
-    created_at: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
-    total_amount: 5500
-  }
-];
-
 export default function DashboardPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const supabase = createClient()
   
   const [products, setProducts] = useState<any[]>([])
-  const [orders, setOrders] = useState<any[]>(initialOrders) // Initialize with mock data
+  const [orders, setOrders] = useState<any[]>([])
   const [stats, setStats] = useState({
     activeProducts: 0,
     soldProducts: 0,
     totalEarnings: 0,
-    pendingOrders: initialOrders.filter(o => o.status === 'pending').length,
-    deliveredOrders: initialOrders.filter(o => o.status === 'delivered').length,
-    totalOrders: initialOrders.length
+    pendingOrders: 0,
+    deliveredOrders: 0,
+    totalOrders: 0
   })
 
   useEffect(() => {
@@ -95,55 +31,66 @@ export default function DashboardPage() {
   const fetchData = async () => {
     if (!user) return
 
-    // First get user's artisan profile
-    const { data: artisanProfile } = await supabase
-      .from('artisan_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .single()
+    try {
+      // First get user's artisan profile
+      const { data: artisanProfile } = await supabase
+        .from('artisan_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single()
 
-    // Then fetch products using artisan_id
-    if (artisanProfile) {
-      const { data: productsData } = await supabase
-        .from('products')
+      // Fetch products using artisan_id
+      if (artisanProfile) {
+        const { data: productsData } = await supabase
+          .from('products')
+          .select('*')
+          .eq('artisan_id', artisanProfile.id)
+          .order('created_at', { ascending: false })
+
+        if (productsData) {
+          setProducts(productsData)
+          setStats(prev => ({
+            ...prev,
+            activeProducts: productsData.length
+          }))
+        }
+      }
+
+      // Fetch user's orders (as buyer) from Supabase
+      const { data: ordersData, error } = await supabase
+        .from('orders')
         .select('*')
-        .eq('artisan_id', artisanProfile.id)
+        .eq('buyer_id', user.id)
         .order('created_at', { ascending: false })
 
-      if (productsData) {
-        setProducts(productsData)
+      if (error) {
+        console.error('Error fetching orders:', error)
+      }
+
+      if (ordersData && ordersData.length > 0) {
+        setOrders(ordersData)
+        const pending = ordersData.filter(o => o.status === 'pending').length
+        const delivered = ordersData.filter(o => o.status === 'delivered').length
+        
         setStats(prev => ({
           ...prev,
-          activeProducts: productsData.length
+          pendingOrders: pending,
+          deliveredOrders: delivered,
+          totalOrders: ordersData.length
+        }))
+      } else {
+        // No orders found - set empty state
+        setOrders([])
+        setStats(prev => ({
+          ...prev,
+          pendingOrders: 0,
+          deliveredOrders: 0,
+          totalOrders: 0
         }))
       }
+    } catch (error) {
+      console.error('Error in fetchData:', error)
     }
-
-    // === COMMENT OUT THIS SECTION TO USE MOCK DATA ===
-    // Fetch user's orders (as buyer) from Supabase
-    /* 
-    const { data: ordersData } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('buyer_id', user.id)
-      .order('created_at', { ascending: false })
-
-    if (ordersData) {
-      setOrders(ordersData)
-      const pending = ordersData.filter(o => o.status === 'pending').length
-      const delivered = ordersData.filter(o => o.status === 'delivered').length
-      
-      setStats(prev => ({
-        ...prev,
-        pendingOrders: pending,
-        deliveredOrders: delivered,
-        totalOrders: ordersData.length
-      }))
-    }
-    */
-    // === UNCOMMENT ABOVE TO USE REAL SUPABASE DATA ===
-    
-    // Currently using mock data (initialOrders) set in state initialization
   }
 
   if (loading) {
