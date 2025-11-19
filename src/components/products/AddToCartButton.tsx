@@ -1,16 +1,21 @@
 'use client'
 
 import { useCart } from '@/contexts/CartContext'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function AddToCartButton({ product }: { product: any }) {
   const { addToCart } = useCart()
+  const router = useRouter()
   const [added, setAdded] = useState(false)
 
   const handleAdd = () => {
     addToCart(product)
     setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
+    // Redirect to cart page after short delay
+    setTimeout(() => {
+      router.push('/cart')
+    }, 500)
   }
 
   return (
