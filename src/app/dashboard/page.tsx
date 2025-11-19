@@ -177,7 +177,7 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
           {/* My Orders Card */}
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl border-2 p-6 md:p-8 transition-all duration-300 transform hover:scale-105 animate-slide-up" 
                style={{ borderColor: '#e8dfd0' }}>
@@ -304,49 +304,6 @@ export default function DashboardPage() {
               <div className="text-center">
                 <div className="text-xl md:text-2xl font-bold" style={{ color: '#926829' }}>₹{stats.totalEarnings}</div>
                 <p className="text-xs text-gray-600">Earnings</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Manage Orders Card (Seller) */}
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl border-2 p-6 md:p-8 transition-all duration-300 transform hover:scale-105 animate-slide-up" 
-               style={{ borderColor: '#e8dfd0', animationDelay: '0.2s' }}>
-            <div className="text-center mb-4 md:mb-6">
-              <div className="text-4xl md:text-5xl lg:text-6xl mb-3 md:mb-4 animate-bounce-subtle" style={{ animationDelay: '0.4s' }}>📊</div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2 md:mb-3" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
-                Manage Orders
-              </h2>
-              <div className="w-16 md:w-20 h-1 md:h-1.5 mx-auto rounded-full mb-3 md:mb-4" style={{ backgroundColor: '#926829' }}></div>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg md:rounded-xl p-4 md:p-6 mb-4 md:mb-6" style={{ backgroundColor: '#f5efe6' }}>
-              <p className="text-gray-600 text-base md:text-lg text-center mb-2">
-                Update tracking & status
-              </p>
-              <p className="text-xs md:text-sm text-gray-500 text-center">
-                Manage orders for your products
-              </p>
-            </div>
-
-            <Link href="/dashboard/manage-orders">
-              <button className="w-full py-3 md:py-4 text-white rounded-lg md:rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
-                      style={{ backgroundColor: '#926829', minHeight: '44px' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7a5621')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}>
-                <span>Manage Orders</span>
-                <span>→</span>
-              </button>
-            </Link>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-2 md:gap-3 mt-4 md:mt-6 pt-4 md:pt-6 border-t-2" style={{ borderColor: '#e8dfd0' }}>
-              <div className="text-center">
-                <div className="text-xl md:text-2xl font-bold text-orange-500">⏳</div>
-                <p className="text-xs text-gray-600 mt-1">Update Tracking</p>
-              </div>
-              <div className="text-center">
-                <div className="text-xl md:text-2xl font-bold text-green-500">✅</div>
-                <p className="text-xs text-gray-600 mt-1">Mark Delivered</p>
               </div>
             </div>
           </div>
