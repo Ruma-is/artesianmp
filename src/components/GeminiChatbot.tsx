@@ -110,7 +110,6 @@ export default function GeminiChatbot() {
               <span className="text-xl sm:text-2xl">🤖</span>
               <div>
                 <h3 className="font-bold text-sm sm:text-base">Rural Connection AI</h3>
-                <p className="text-xs opacity-90">Powered by Perplexity</p>
               </div>
             </div>
             <button
