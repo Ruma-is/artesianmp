@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <title>Rural Connection</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -21,7 +21,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#926829" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
-      <body suppressHydrationWarning>
+      <body>
         <AuthProvider>
           <CartProvider>
             <Navbar />
