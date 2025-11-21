@@ -3,9 +3,11 @@
 import { useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useLanguage } from '@/contexts/LanguageContext'
 import Link from 'next/link'
 
 function LoginForm() {
+  const { language, translations } = useLanguage()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -72,8 +74,8 @@ function LoginForm() {
 
           <div className="rounded-2xl shadow-2xl p-6 md:p-8 border transform transition-all duration-300 md:hover:shadow-3xl animate-scale-in" style={{ backgroundColor: '#ffffff', borderColor: '#e8dfd0' }}>
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 animate-fade-in">Welcome Back</h2>
-              <p className="text-sm md:text-base text-gray-600 animate-fade-in-delay-1">Sign in to continue your journey</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 animate-fade-in">{translations.welcomeBack[language]}</h2>
+              <p className="text-sm md:text-base text-gray-600 animate-fade-in-delay-1">{translations.signInContinue[language]}</p>
             </div>
             
             {error && (
@@ -88,7 +90,7 @@ function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
               <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
                 <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
-                  Email Address
+                  {translations.emailAddress[language]}
                 </label>
                 <input
                   type="email"
@@ -103,7 +105,7 @@ function LoginForm() {
 
               <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
-                  Password
+                  {translations.password[language]}
                 </label>
                 <input
                   type="password"
@@ -137,7 +139,7 @@ function LoginForm() {
                     Signing In...
                   </span>
                 ) : (
-                  'Sign In'
+                  translations.signIn[language]
                 )}
               </button>
             </form>
@@ -148,7 +150,7 @@ function LoginForm() {
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-xs md:text-sm">
-                  <span className="px-3 md:px-4 bg-white text-gray-500">New to our marketplace?</span>
+                  <span className="px-3 md:px-4 bg-white text-gray-500">{translations.newToMarketplace[language]}</span>
                 </div>
               </div>
               
@@ -158,7 +160,7 @@ function LoginForm() {
                   className="font-semibold hover:underline transition-all duration-200 md:hover:scale-105 inline-block"
                   style={{ color: '#926829' }}
                 >
-                  Create an account
+                  {translations.createAccount[language]}
                 </Link>
               </p>
             </div>

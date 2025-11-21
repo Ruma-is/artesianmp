@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCart } from '@/contexts/CartContext'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -10,6 +11,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { totalItems } = useCart()
+  const { language, translations } = useLanguage()
   const [visible, setVisible] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
@@ -79,28 +81,35 @@ export default function Navbar() {
               <Link 
                 href="/"
                 className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
-                Home
+                {translations.home[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
               <Link 
                 href="/products"
                 className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/products') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
-                Products
+                {translations.products[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/products') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
               <Link 
                 href="/dashboard"
                 className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/dashboard') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
-                Dashboard
+                {translations.dashboard[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/dashboard') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+              </Link>
+
+              <Link 
+                href="/chat"
+                className={`transition-all duration-300 hover:scale-110 relative group text-sm xl:text-base ${isActive('/chat') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
+                💬 {translations.chat[language]}
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/chat') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
               <Link 
                 href="/cart"
                 className={`relative transition-all duration-300 hover:scale-110 group text-sm xl:text-base ${isActive('/cart') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}>
-                🛒 Cart
+                🛒 {translations.cart[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/cart') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
                 {totalItems > 0 && (
                   <span className="absolute -top-2 -right-2 bg-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-bounce-subtle shadow-lg" style={{ color: '#926829' }}>
@@ -117,7 +126,7 @@ export default function Navbar() {
                       className="bg-white px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform text-sm xl:text-base"
                       style={{ color: '#926829' }}
                     >
-                      Logout
+                      {translations.logout[language]}
                     </button>
                   ) : (
                     <>
@@ -125,7 +134,7 @@ export default function Navbar() {
                         href="/auth/login"
                         className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110 text-sm xl:text-base"
                       >
-                        Login
+                        {translations.login[language]}
                       </Link>
 
                       <Link
@@ -133,7 +142,7 @@ export default function Navbar() {
                         className="bg-white px-4 xl:px-5 py-2 xl:py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform text-sm xl:text-base"
                         style={{ color: '#926829' }}
                       >
-                        Sign Up
+                        {translations.signUp[language]}
                       </Link>
                     </>
                   )}
@@ -147,6 +156,7 @@ export default function Navbar() {
               className="lg:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
               style={{ minWidth: '44px', minHeight: '44px' }}
               aria-label="Toggle mobile menu"
+              suppressHydrationWarning
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
@@ -167,7 +177,7 @@ export default function Navbar() {
                 className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
                 style={{ minHeight: '44px' }}
               >
-                Home
+                {translations.home[language]}
               </Link>
 
               <Link 
@@ -176,7 +186,7 @@ export default function Navbar() {
                 className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/products') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
                 style={{ minHeight: '44px' }}
               >
-                Products
+                {translations.products[language]}
               </Link>
 
               <Link 
@@ -185,7 +195,16 @@ export default function Navbar() {
                 className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/dashboard') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
                 style={{ minHeight: '44px' }}
               >
-                Dashboard
+                {translations.dashboard[language]}
+              </Link>
+
+              <Link 
+                href="/chat"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/chat') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
+                style={{ minHeight: '44px' }}
+              >
+                💬 {translations.chat[language]}
               </Link>
 
               <Link 
@@ -194,7 +213,7 @@ export default function Navbar() {
                 className={`block py-2 px-4 rounded-lg transition-all text-base ${isActive('/cart') ? 'bg-white/20 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'}`}
                 style={{ minHeight: '44px' }}
               >
-                🛒 Cart {totalItems > 0 && `(${totalItems})`}
+                🛒 {translations.cart[language]} {totalItems > 0 && `(${totalItems})`}
               </Link>
 
               {!loading && (
@@ -205,7 +224,7 @@ export default function Navbar() {
                       className="w-full bg-white py-2 px-4 rounded-lg hover:bg-gray-100 transition-all font-semibold text-left text-base"
                       style={{ color: '#926829', minHeight: '44px' }}
                     >
-                      Logout
+                      {translations.logout[language]}
                     </button>
                   ) : (
                     <>
@@ -215,7 +234,7 @@ export default function Navbar() {
                         className="block py-2 px-4 rounded-lg text-gray-100 hover:bg-white/10 transition-all text-base"
                         style={{ minHeight: '44px' }}
                       >
-                        Login
+                        {translations.login[language]}
                       </Link>
 
                       <Link
@@ -224,7 +243,7 @@ export default function Navbar() {
                         className="block bg-white py-2 px-4 rounded-lg hover:bg-gray-100 transition-all font-semibold text-base"
                         style={{ color: '#926829', minHeight: '44px' }}
                       >
-                        Sign Up
+                        {translations.signUp[language]}
                       </Link>
                     </>
                   )}
@@ -271,7 +290,7 @@ export default function Navbar() {
                 href="/"
                 className={`transition-all duration-300 hover:scale-110 relative group animate-slide-in ${isActive('/') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}
                 style={{ animationDelay: '0.1s' }}>
-                Home
+                {translations.home[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
@@ -279,7 +298,7 @@ export default function Navbar() {
                 href="/products"
                 className={`transition-all duration-300 hover:scale-110 relative group animate-slide-in ${isActive('/products') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}
                 style={{ animationDelay: '0.15s' }}>
-                Products
+                {translations.products[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/products') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
@@ -287,7 +306,7 @@ export default function Navbar() {
                 href="/dashboard"
                 className={`transition-all duration-300 hover:scale-110 relative group animate-slide-in ${isActive('/dashboard') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}
                 style={{ animationDelay: '0.2s' }}>
-                Dashboard
+                {translations.dashboard[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/dashboard') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
 
@@ -295,7 +314,7 @@ export default function Navbar() {
                 href="/cart"
                 className={`relative transition-all duration-300 hover:scale-110 group animate-slide-in ${isActive('/cart') ? 'text-white font-semibold' : 'text-gray-100 hover:text-white'}`}
                 style={{ animationDelay: '0.25s' }}>
-                🛒 Cart
+                🛒 {translations.cart[language]}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isActive('/cart') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
                 {totalItems > 0 && (
                   <span className="absolute -top-2 -right-2 bg-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-bounce-subtle shadow-lg" style={{ color: '#926829' }}>
@@ -312,7 +331,7 @@ export default function Navbar() {
                       className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform animate-slide-in"
                       style={{ color: '#926829', animationDelay: '0.3s' }}
                     >
-                      Logout
+                      {translations.logout[language]}
                     </button>
                   ) : (
                     <>
@@ -321,7 +340,7 @@ export default function Navbar() {
                         className="text-gray-100 hover:text-white transition-all duration-300 hover:scale-110 animate-slide-in"
                         style={{ animationDelay: '0.3s' }}
                       >
-                        Login
+                        {translations.login[language]}
                       </Link>
 
                       <Link
@@ -329,7 +348,7 @@ export default function Navbar() {
                         className="bg-white px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-all duration-300 font-semibold shadow-md hover:shadow-xl hover:scale-105 transform animate-slide-in"
                         style={{ color: '#926829', animationDelay: '0.35s' }}
                       >
-                        Sign Up
+                        {translations.signUp[language]}
                       </Link>
                     </>
                   )}

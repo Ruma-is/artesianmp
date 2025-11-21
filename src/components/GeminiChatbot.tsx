@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -9,17 +11,25 @@ interface Message {
 }
 
 export default function GeminiChatbot() {
+  const pathname = usePathname()
+  const { language, translations } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: 'Hi! Welcome to Rural Connection! 👋 How can I help you today?',
-      timestamp: new Date()
-    }
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Initialize welcome message when language changes
+  useEffect(() => {
+    setMessages([{
+      role: 'assistant',
+      content: translations.chatbotWelcome[language],
+      timestamp: new Date()
+    }])
+  }, [language, translations])
+
+  // Hide chatbot on these pages
+  const shouldHide = pathname === '/chat' || pathname === '/auth/login' || pathname === '/auth/signup'
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -28,6 +38,58 @@ export default function GeminiChatbot() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Listen for external chatbot open requests
+  useEffect(() => {
+    const handleOpenChatbot = (event: CustomEvent) => {
+      const { message } = event.detail
+      setIsOpen(true)
+      if (message) {
+        // Auto-send the message after a short delay
+        setTimeout(() => {
+          setInput(message)
+          // Trigger send
+          const userMessage: Message = {
+            role: 'user',
+            content: message,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, userMessage])
+          setIsLoading(true)
+
+          console.log('Sending message with language:', language)
+          fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, language })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                const assistantMessage: Message = {
+                  role: 'assistant',
+                  content: data.message,
+                  timestamp: new Date()
+                }
+                setMessages(prev => [...prev, assistantMessage])
+              }
+            })
+            .catch(error => {
+              console.error('Chat error:', error)
+            })
+            .finally(() => {
+              setIsLoading(false)
+              setInput('')
+            })
+        }, 300)
+      }
+    }
+
+    window.addEventListener('openChatbot' as any, handleOpenChatbot as EventListener)
+    return () => {
+      window.removeEventListener('openChatbot' as any, handleOpenChatbot as EventListener)
+    }
+  }, [language])
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
@@ -43,10 +105,11 @@ export default function GeminiChatbot() {
     setIsLoading(true)
 
     try {
+      console.log('Sending message with language:', language)
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input })
+        body: JSON.stringify({ message: input, language })
       })
 
       const data = await response.json()
@@ -80,6 +143,11 @@ export default function GeminiChatbot() {
       e.preventDefault()
       sendMessage()
     }
+  }
+
+  // Don't render chatbot on certain pages
+  if (shouldHide) {
+    return null
   }
 
   return (

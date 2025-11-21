@@ -1,12 +1,14 @@
 'use client'
 
 import { useCart } from '@/contexts/CartContext'
+import { useLanguage } from '@/contexts/LanguageContext'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 
 export default function CartPage() {
   const { items, updateQuantity, removeFromCart, totalPrice, totalItems } = useCart()
+  const { language, translations } = useLanguage()
   const [removingId, setRemovingId] = useState<string | null>(null)
 
   const handleRemove = (id: string) => {
@@ -23,18 +25,18 @@ export default function CartPage() {
         <div className="text-center animate-fade-in">
           <div className="text-6xl md:text-7xl lg:text-8xl mb-4 md:mb-6 animate-bounce-subtle">🛒</div>
           <h2 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
-            Your Cart is Empty
+            {translations.yourCartEmpty[language]}
           </h2>
           <div className="w-20 md:w-24 h-1.5 mx-auto rounded-full mb-4 md:mb-6 animate-expand-center" style={{ backgroundColor: '#926829' }}></div>
           <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8">
-            Discover handcrafted treasures and start your collection!
+            {translations.discoverTreasures[language]}
           </p>
           <Link href="/products">
             <button className="px-8 md:px-10 py-3 md:py-4 text-white rounded-xl font-semibold transition-all duration-300 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 shadow-lg md:hover:shadow-2xl flex items-center gap-2 mx-auto text-sm md:text-base"
                     style={{ backgroundColor: '#926829', minHeight: '44px' }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#7a5621')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#926829')}>
-              <span>Browse Products</span>
+              <span>{translations.browseProducts[language]}</span>
               <span className="transform md:group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </Link>
@@ -53,16 +55,16 @@ export default function CartPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="animate-fade-in">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2" style={{ fontFamily: 'Georgia, serif', color: '#926829' }}>
-                Shopping Cart
+                {translations.shoppingCart[language]}
               </h1>
               <p className="text-gray-600 text-sm md:text-base lg:text-lg">
-                {totalItems} {totalItems === 1 ? 'item' : 'items'} in your cart
+                {totalItems} {translations.itemsInCart[language]}
               </p>
             </div>
             <Link href="/products">
               <button className="px-5 md:px-6 py-2.5 md:py-3 border-2 rounded-lg font-semibold transition-all duration-300 transform active:scale-95 md:hover:scale-105 text-sm md:text-base"
                       style={{ borderColor: '#926829', color: '#926829', minHeight: '44px' }}>
-                Continue Shopping
+                {translations.continueShopping[language]}
               </button>
             </Link>
           </div>

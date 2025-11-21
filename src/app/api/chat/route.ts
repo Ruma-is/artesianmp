@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { message } = await request.json()
+    const { message, language = 'en' } = await request.json()
+
+    console.log('Chat API received - Message:', message, 'Language:', language)
 
     if (!message) {
       return NextResponse.json(
@@ -19,36 +21,59 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Language name mapping
+    const languageNames: Record<string, string> = {
+      en: 'English',
+      hi: 'Hindi',
+      ta: 'Tamil',
+      te: 'Telugu',
+      bn: 'Bengali',
+      mr: 'Marathi',
+      gu: 'Gujarati',
+      kn: 'Kannada',
+      ml: 'Malayalam',
+      pa: 'Punjabi'
+    }
+
+    const languageName = languageNames[language] || 'English'
+
+    console.log('Using language:', languageName, '(code:', language, ')')
+
     // System prompt for Rural Connection marketplace
-    const systemPrompt = `You are the Rural Connection AI assistant - a helpful chatbot for an Indian rural artisan marketplace platform.
+    const systemPrompt = `You are the Rural Connection AI assistant. You MUST ONLY help with Rural Connection marketplace questions.
 
-STRICT RULES:
-1. ONLY answer questions about:
-   - Rural Connection marketplace products (handicrafts, textiles, pottery, jewelry, home decor)
-   - Indian artisans and their crafts
-   - Orders, shipping, payments, and customer support
-   - Traditional Indian craftsmanship and techniques
-   - Product recommendations from our marketplace
-   - How to become a seller/artisan on the platform
+CRITICAL LANGUAGE INSTRUCTION: You MUST respond EXCLUSIVELY in ${languageName}. Every single word of your response must be in ${languageName}. This is mandatory and non-negotiable. Even if the user writes in English, you MUST respond in ${languageName}.
 
-2. If asked about UNRELATED topics (celebrities, sports, news, politics, technology, general knowledge, etc.), IMMEDIATELY respond:
-   "I'm here to help with Rural Connection marketplace queries. Please ask about our artisan products, orders, or support!"
+CRITICAL INSTRUCTION - READ CAREFULLY:
+You are FORBIDDEN from answering ANY questions that are NOT directly related to Rural Connection marketplace.
 
-3. Keep answers CONCISE (2-3 sentences maximum)
+ALLOWED TOPICS ONLY:
+- Rural Connection products (handicrafts, textiles, pottery, jewelry, home decor)
+- Indian artisans and traditional crafts sold on Rural Connection
+- Orders, shipping, payments on Rural Connection
+- Customer support for Rural Connection
+- How to become a seller/artisan on Rural Connection
+- Product recommendations from Rural Connection catalog
 
-4. Always be helpful, friendly, and professional
+FORBIDDEN TOPICS (DO NOT ANSWER):
+- Celebrities, sports figures, athletes, actors
+- News, politics, current events
+- Technology unrelated to our marketplace
+- General knowledge questions
+- Science, history, geography
+- Entertainment, movies, music
+- ANY topic not related to Rural Connection marketplace
 
-5. Promote Rural Connection's mission: Empowering rural artisans and preserving traditional Indian crafts
+MANDATORY RESPONSE for ANY forbidden topic (must be in ${languageName}):
+Translate and respond: "I'm here to help with Rural Connection marketplace queries. Please ask about our artisan products, orders, or support!"
 
-KEY INFORMATION:
-- Handmade traditional crafts from talented Indian artisans
-- Products: textiles, pottery, jewelry, home decor, handicrafts
-- Shipping across India (5-7 business days)
-- UPI and PhonePe payment accepted
-- Customers can register as sellers/artisans via "Become an Artisan" page
-- Mission: Support rural communities and preserve traditional craftsmanship
+Keep marketplace answers to 2-3 sentences maximum. REMEMBER: Every word MUST be in ${languageName}.`
 
-Remember: STRICTLY refuse to answer non-marketplace topics. Politely redirect every time.`
+    // Prepare user message with language instruction
+    const userMessageWithLanguage = `[RESPOND IN ${languageName.toUpperCase()}] ${message}`
+
+    console.log('System prompt language:', languageName)
+    console.log('User message:', userMessageWithLanguage)
 
     // Call Perplexity API
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -66,7 +91,7 @@ Remember: STRICTLY refuse to answer non-marketplace topics. Politely redirect ev
           },
           {
             role: 'user',
-            content: message
+            content: userMessageWithLanguage
           }
         ]
       })

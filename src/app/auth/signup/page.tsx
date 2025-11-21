@@ -4,9 +4,11 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/contexts/LanguageContext'
 import Link from 'next/link'
 
 export default function SignupPage() {
+  const { language, translations } = useLanguage()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -81,8 +83,8 @@ export default function SignupPage() {
 
           <div className="rounded-2xl shadow-2xl p-6 md:p-8 border transform transition-all duration-300 md:hover:shadow-3xl animate-scale-in" style={{ backgroundColor: '#ffffff', borderColor: '#e8dfd0' }}>
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 animate-fade-in">Create Account</h2>
-              <p className="text-sm md:text-base text-gray-600 animate-fade-in-delay-1">Begin your artisan journey</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 animate-fade-in">{translations.createAccount[language]}</h2>
+              <p className="text-sm md:text-base text-gray-600 animate-fade-in-delay-1">{translations.beginJourney[language]}</p>
             </div>
             
             {error && (
@@ -97,7 +99,7 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} className="space-y-4 md:space-y-5">
               <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
                 <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
-                  Full Name
+                  {translations.fullName[language]}
                 </label>
                 <input
                   type="text"
@@ -112,7 +114,7 @@ export default function SignupPage() {
 
               <div className="animate-slide-up" style={{ animationDelay: '0.15s' }}>
                 <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
-                  Email Address
+                  {translations.emailAddress[language]}
                 </label>
                 <input
                   type="email"
@@ -127,7 +129,7 @@ export default function SignupPage() {
 
               <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
-                  Password
+                  {translations.password[language]}
                 </label>
                 <input
                   type="password"
@@ -177,7 +179,7 @@ export default function SignupPage() {
                     Creating Account...
                   </span>
                 ) : (
-                  'Create Account'
+                  translations.createAccount[language]
                 )}
               </button>
             </form>
@@ -188,7 +190,7 @@ export default function SignupPage() {
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-xs md:text-sm">
-                  <span className="px-3 md:px-4 bg-white text-gray-500">Already have an account?</span>
+                  <span className="px-3 md:px-4 bg-white text-gray-500">{translations.alreadyHaveAccount[language]}</span>
                 </div>
               </div>
               
@@ -198,7 +200,7 @@ export default function SignupPage() {
                   className="font-semibold hover:underline transition-all duration-200 md:hover:scale-105 inline-block"
                   style={{ color: '#926829' }}
                 >
-                  Sign in instead
+                  {translations.signInInstead[language]}
                 </Link>
               </p>
             </div>

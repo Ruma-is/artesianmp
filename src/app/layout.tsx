@@ -1,4 +1,6 @@
 import { CartProvider } from '@/contexts/CartContext'
+import { ChatbotProvider } from '@/contexts/ChatbotContext'
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import { AuthProvider } from '@/lib/supabase/auth-context'
 import Navbar from '@/components/Navbar'
 import GeminiChatbot from '@/components/GeminiChatbot'
@@ -23,12 +25,16 @@ export default function RootLayout({
       </head>
       <body>
         <AuthProvider>
-          <CartProvider>
-            <Navbar />
-            {children}
-            <GeminiChatbot />
-            <InstallPWA />
-          </CartProvider>
+          <LanguageProvider>
+            <CartProvider>
+              <ChatbotProvider>
+                <Navbar />
+                {children}
+                <GeminiChatbot />
+                <InstallPWA />
+              </ChatbotProvider>
+            </CartProvider>
+          </LanguageProvider>
         </AuthProvider>
         
         {/* Service Worker Registration */}

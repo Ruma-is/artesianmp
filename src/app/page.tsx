@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
+  const { language, translations } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -14,6 +17,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-hidden" style={{ backgroundColor: '#faf8f5' }}>
+      {/* Language Selector - Floating Top Right */}
+      <div className="fixed top-20 md:top-24 right-4 md:right-6 z-50">
+        <LanguageSelector />
+      </div>
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-12 md:py-0" style={{ backgroundColor: '#926829' }}>
         {/* Animated Background Pattern */}
@@ -43,12 +51,11 @@ export default function Home() {
           </div>
 
           <p className="text-lg md:text-2xl lg:text-3xl text-gray-100 mb-4 md:mb-6 max-w-4xl mx-auto font-light leading-relaxed animate-fade-in-delay-1">
-            Where Traditional Craftsmanship Meets Modern Commerce
+            {translations.discoverArtisan[language]}
           </p>
 
           <p className="text-base md:text-lg lg:text-xl text-gray-200 mb-8 md:mb-12 max-w-3xl mx-auto px-4 animate-fade-in-delay-2">
-            Discover authentic handmade treasures from talented artisans across India. 
-            Every purchase tells a story, preserves a tradition, and supports a dream.
+            {translations.handcraftedWithLove[language]}
           </p>
 
           {/* CTA Buttons */}
@@ -57,7 +64,7 @@ export default function Home() {
               <button className="group relative px-8 md:px-10 py-3 md:py-4 bg-white text-base md:text-lg font-semibold rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 overflow-hidden w-full sm:w-auto"
                       style={{ color: '#926829', minHeight: '44px' }}>
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  Browse Products
+                  {translations.exploreProducts[language]}
                   <span className="transform group-hover:translate-x-1 transition-transform">→</span>
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -68,7 +75,7 @@ export default function Home() {
                       style={{ borderWidth: '2px', minHeight: '44px' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = '#926829')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'white')}>
-                Start Selling
+                {translations.becomeArtisan[language]}
               </button>
             </Link>
           </div>
@@ -127,16 +134,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-8 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
-              Why Choose Us
+              {translations.whyChooseUs[language]}
             </h2>
             <div className="w-20 md:w-24 h-1 md:h-1.5 mx-auto rounded-full animate-expand-center" style={{ backgroundColor: '#926829' }}></div>
-            <p className="text-base md:text-lg lg:text-xl text-gray-600 mt-4 md:mt-6 max-w-3xl mx-auto px-4">
-              Experience the perfect blend of tradition and technology
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-            {/* For Buyers */}
+            {/* Authentic Handmade */}
             <div className="group relative bg-white p-6 md:p-10 rounded-xl md:rounded-2xl shadow-xl hover:shadow-3xl border-2 transition-all duration-500 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-2 animate-slide-up overflow-hidden"
                  style={{ 
                    borderColor: '#e8dfd0',
@@ -148,105 +152,58 @@ export default function Home() {
               
               <div className="relative z-10">
                 <div className="text-4xl md:text-5xl lg:text-6xl mb-4 md:mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                  🛍️
+                  🎨
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
-                  For Buyers
+                  {translations.authenticHandmade[language]}
                 </h3>
-                <p className="text-gray-600 text-sm md:text-base lg:text-lg leading-relaxed mb-4 md:mb-6">
-                  Discover unique handcrafted products and support rural artisans directly. 
-                  Every purchase makes a difference.
+                <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+                  {translations.authenticDesc[language]}
                 </p>
-                <ul className="space-y-2 md:space-y-3 text-gray-600 text-sm md:text-base">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Authentic handmade products</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Direct artisan support</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Quality guaranteed</span>
-                  </li>
-                </ul>
               </div>
             </div>
 
-            {/* For Artisans */}
+            {/* Direct Support */}
             <div className="group relative bg-white p-6 md:p-10 rounded-xl md:rounded-2xl shadow-xl hover:shadow-3xl border-2 transition-all duration-500 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-2 animate-slide-up overflow-hidden"
                  style={{ 
                    borderColor: '#e8dfd0',
                    animationDelay: '0.2s'
                  }}>
-              {/* Decorative Circle */}
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"
                    style={{ backgroundColor: '#926829' }}></div>
               
               <div className="relative z-10">
-                <div className="text-6xl mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                  ✨
+                <div className="text-4xl md:text-5xl lg:text-6xl mb-4 md:mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  🤝
                 </div>
-                <h3 className="text-3xl font-bold mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
-                  For Artisans
+                <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
+                  {translations.directSupport[language]}
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  Showcase your craftsmanship to a global audience and grow your business 
-                  without boundaries.
+                <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+                  {translations.directDesc[language]}
                 </p>
-                <ul className="space-y-3 text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Global marketplace</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Fair pricing tools</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Business growth support</span>
-                  </li>
-                </ul>
               </div>
             </div>
 
-            {/* AI-Powered */}
-            <div className="group relative bg-white p-10 rounded-2xl shadow-xl hover:shadow-3xl border-2 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 animate-slide-up overflow-hidden"
+            {/* Unique Designs */}
+            <div className="group relative bg-white p-6 md:p-10 rounded-xl md:rounded-2xl shadow-xl hover:shadow-3xl border-2 transition-all duration-500 transform active:scale-95 md:hover:scale-105 md:hover:-translate-y-2 animate-slide-up overflow-hidden"
                  style={{ 
                    borderColor: '#e8dfd0',
                    animationDelay: '0.3s'
                  }}>
-              {/* Decorative Circle */}
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"
                    style={{ backgroundColor: '#926829' }}></div>
               
               <div className="relative z-10">
-                <div className="text-6xl mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                  🤖
+                <div className="text-4xl md:text-5xl lg:text-6xl mb-4 md:mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  ✨
                 </div>
-                <h3 className="text-3xl font-bold mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
-                  AI-Powered
+                <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4" style={{ color: '#926829', fontFamily: 'Georgia, serif' }}>
+                  {translations.uniqueDesigns[language]}
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  Leverage cutting-edge AI technology for better product discovery, 
-                  pricing, and customer engagement.
+                <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+                  {translations.uniqueDesc[language]}
                 </p>
-                <ul className="space-y-3 text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Smart recommendations</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Multilingual chat</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Dynamic pricing</span>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
